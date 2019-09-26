@@ -1,0 +1,239 @@
+________________________________________
+               MISSING VALUES         
+________________________________________
+H3A10031:
+DMR0D has 9 missing values
+H3A10059:
+DNW0J has 9 missing values
+H3A10094:
+DQV0M has 9 missing values
+H3A10100:
+DQY0Q has 9 missing values
+H3A10113:
+DRL0G has 9 missing values
+H3A10114:
+DRM0H has 9 missing values
+H3A1060131:
+CZB0H has 9 missing values
+H3A1063219:
+CTA0V has 9 missing values
+H3A1251:
+AKK0H has 9 missing values
+H3A1295:
+AMG0H has 9 missing values
+H3A1411:
+ARL0W has 9 missing values
+H3A1456:
+ATZ0N has 9 missing values
+H3A1539063:
+CBF0N has 9 missing values
+H3A1590:
+BAI0L has 9 missing values
+H3A1645:
+BCN0W has 9 missing values
+H3A1650:
+BCW0E has 9 missing values
+H3A1653:
+BCZ0H has 9 missing values
+H3A1677:
+BDZ0J has 9 missing values
+H3A1696:
+BET0G has 9 missing values
+H3A1745:
+BGV0L has 9 missing values
+H3A1772:
+BHY0R has 9 missing values
+H3A2109249:
+CNP0A has 9 missing values
+H3A2117281:
+DJG0K has 9 missing values
+H3A2375375:
+CFE0W has 9 missing values
+H3A2794835:
+CFN0G has 9 missing values
+H3A29066990:
+DKI0P has 9 missing values
+H3A3433261:
+DET0M has 9 missing values
+H3A3542141:
+CXC0E has 9 missing values
+H3A3693781:
+DFN0J has 9 missing values
+H3A4517046:
+CJL0M has 9 missing values
+H3A4621763:
+DDZ0Q has 9 missing values
+H3A4744686:
+DJE0I has 9 missing values
+H3A5052711:
+DFB0W has 9 missing values
+H3A5492963:
+DIE0G has 9 missing values
+H3A5717273:
+CNZ0J has 9 missing values
+H3A5979503:
+CCA0K has 9 missing values
+H3A6137285:
+CFX0P has 9 missing values
+H3A6823287:
+DFJ0F has 9 missing values
+H3A7490657:
+CPD0P has 9 missing values
+H3A7888045:
+CVF0D has 9 missing values
+H3A7940565:
+DFK0G has 9 missing values
+H3A8630231:
+DGI0G has 9 missing values
+H3A8733357:
+CNS0D has 9 missing values
+H3A9058339:
+DFX0S has 9 missing values
+H3A9243249:
+CLQ0W has 9 missing values
+H3A9385420:
+DEP0I has 9 missing values
+H3A9553354:
+CLV0B has 9 missing values
+
+________________________________________
+              OUTLIERS         
+_____________________________________________
+Series([], Name: anth_standing_height, dtype: float64) 
+_____________________________________________
+Series([], Name: anth_weight, dtype: float64) 
+_____________________________________________
+Series([], Name: anth_waist_circumf_1, dtype: float64) 
+_____________________________________________
+Series([], Name: anth_waist_circumf_2, dtype: float64) 
+_____________________________________________
+Series([], Name: anth_waist_circumf, dtype: float64) 
+_____________________________________________
+Series([], Name: anth_hip_circumf_1, dtype: float64) 
+_____________________________________________
+Series([], Name: anth_hip_circumf_2, dtype: float64) 
+_____________________________________________
+Series([], Name: anth_hip_circumf, dtype: float64) 
+_____________________________________________
+study_id
+AFW0H    1.0
+CAA0G    3.0
+CCX0I    1.0
+CER0H    1.0
+CFJ0C    3.0
+CHE0B    3.0
+DIA0C    3.0
+DKK0R    3.0
+DKW0D    1.0
+DRZ0T    3.0
+DSC0Y    1.0
+Name: anth_measurementcollector, dtype: float64 
+_____________________________________________
+Series([], Name: anthropometric_measurements_complete, dtype: float64) 
+                COLUMN SUMMARIES             
+_____________________________________________
+count         133
+unique        132
+top       H3A1154
+freq            2
+Name: gene_uni_site_id_correct, dtype: object 
+_____________________________________________
+count      86.000000
+mean      763.737093
+std       732.225872
+min       145.600000
+25%       160.925000
+50%       171.200000
+75%      1600.500000
+max      1923.000000
+Name: anth_standing_height, dtype: float64 
+_____________________________________________
+count     86.000000
+mean      79.419767
+std       17.485233
+min       46.600000
+25%       66.475000
+50%       77.300000
+75%       93.350000
+max      113.700000
+Name: anth_weight, dtype: float64 
+_____________________________________________
+count      86.000000
+mean      460.716628
+std       456.556939
+min        68.500000
+25%        89.125000
+50%       108.000000
+75%       886.500000
+max      1855.000000
+Name: anth_waist_circumf_1, dtype: float64 
+_____________________________________________
+count      86.000000
+mean      461.196512
+std       456.884995
+min        68.300000
+25%        89.125000
+50%       108.250000
+75%       887.250000
+max      1853.000000
+Name: anth_waist_circumf_2, dtype: float64 
+_____________________________________________
+count      86.000000
+mean      460.956570
+std       456.720201
+min        68.400000
+25%        89.125000
+50%       108.125000
+75%       886.875000
+max      1854.000000
+Name: anth_waist_circumf, dtype: float64 
+_____________________________________________
+count      86.000000
+mean      510.777674
+std       483.260940
+min        82.000000
+25%       106.350000
+50%       124.500000
+75%      1018.750000
+max      1470.000000
+Name: anth_hip_circumf_1, dtype: float64 
+_____________________________________________
+count      86.000000
+mean      510.408721
+std       483.934605
+min        68.300000
+25%       106.075000
+50%       124.510000
+75%      1020.750000
+max      1472.000000
+Name: anth_hip_circumf_2, dtype: float64 
+_____________________________________________
+count      86.000000
+mean      510.593198
+std       483.593481
+min        82.150000
+25%       106.418750
+50%       124.505000
+75%      1019.750000
+max      1471.000000
+Name: anth_hip_circumf, dtype: float64 
+_____________________________________________
+count    86.000000
+mean      2.011628
+std       0.359548
+min       1.000000
+25%       2.000000
+50%       2.000000
+75%       2.000000
+max       3.000000
+Name: anth_measurementcollector, dtype: float64 
+_____________________________________________
+count    133.000000
+mean       1.293233
+std        0.959656
+min        0.000000
+25%        0.000000
+50%        2.000000
+75%        2.000000
+max        2.000000
+Name: anthropometric_measurements_complete, dtype: float64 
