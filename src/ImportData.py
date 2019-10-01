@@ -9,6 +9,7 @@ class ImportData:
     token = os.environ.get('REDCAP_TOKEN')
     url = 'https://redcap.core.wits.ac.za/redcap/api/'
 
+    # specify the token and report id for report content
     data = {
         'token': token,
         'content': 'report',
@@ -23,9 +24,8 @@ class ImportData:
         'returnFormat': 'json'
     }
 
-    r = requests.post(url, data)
-    # save records in a csv file
-    pd.read_csv(StringIO(r.text)).to_csv("../resources/data.csv", index=False)
-
     def get_records(self):
-        return pd.read_csv(StringIO(self.r.text))
+        r = requests.post(self.url, self.data)
+        # save records in a csv file --file name: data.csv
+        pd.read_csv(StringIO(r.text)).to_csv("../resources/data.csv", index=False)
+        return '../resources/data.csv'

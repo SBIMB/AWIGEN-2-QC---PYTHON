@@ -1,5 +1,9 @@
 import pandas as pd
 
+# This class has functions which return a specific instrument
+# An instrument contains variables belonging to the same group
+# All instruments were assigned study_id variable for merging purposes
+
 
 class Instruments:
     # df is data_frame in csv format
