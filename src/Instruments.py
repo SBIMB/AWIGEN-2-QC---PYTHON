@@ -7,9 +7,9 @@ class Instruments:
         # A list of missing value types
         missing_values = ["n/a", "na", "--"]
         # read the csv file
-        self.data = pd.read_csv("../resources/data.csv", na_values=missing_values, index_col=None)
+        self.data = pd.read_csv(df, na_values=missing_values, index_col=None)
 
-    def getAnthropometryData(self):
+    def get_anthropometric_measurements(self):
         anthropometry = self.data[['study_id',
                                    'gene_uni_site_id_correct',
                                    'anth_standing_height',
@@ -36,7 +36,8 @@ class Instruments:
                                     'phase_1_unique_site_id',
                                     'phase_1_home_language',
                                     'phase_1_ethnicity',
-                                    'ethnolinguistc_available']]
+                                    'ethnolinguistc_available'
+                                    ]]
         return a_phase_1_data
 
     def get_a_cardiometabolic_risk_factors_diabetes(self):
@@ -46,7 +47,7 @@ class Instruments:
                                                              'carf_diabetes_12months',
                                                              'carf_diabetes_treatment',
                                                              'carf_diabetes_treat_now',
-                                                             'carf_diabetes_treat',
+                                                             # 'carf_diabetes_treat',
                                                              'carf_diabetetreat_specify',
                                                              'carf_diabetes_meds_2',
                                                              'carf_diabetes_traditional',
@@ -80,8 +81,8 @@ class Instruments:
                                      'cogn_difficulty_remember',
                                      'cogn_difficulty_concern',
                                      'cogn_learning_new_task',
-                                     'cogn_word_recall_p1',
-                                     'cogn_words_remember_p1',
+                                     # 'cogn_word_recall_p1',
+                                     # 'cogn_words_remember_p1',
                                      'cogn_imm_recall_score_p1',
                                      'cogn_year',
                                      'cogn_what_is_the_month',
@@ -136,7 +137,7 @@ class Instruments:
 
     def get_a_respiratory_health(self):
         a_respiratory_health = self.data[['study_id',
-                                          'resp_lung_fnc_symptoms',
+                                          # 'resp_lung_fnc_symptoms',
                                           'resp_breath_shortness',
                                           'resp_breath_shortness_ever',
                                           'resp_mucus',
@@ -147,13 +148,14 @@ class Instruments:
                                           'resp_age_diagnosed',
                                           'resp_asthma_treat',
                                           'resp_asthma_treat_now',
-                                          'resp_copd_suffer',
+                                          # 'resp_copd_suffer',
                                           'resp_copd_treat',
                                           'resp_inhaled_medication',
                                           'resp_medication_list',
                                           'resp_puffs_time',
-                                          'resp_puffs_times_day',
-                                          'resp_measles_suffer']]
+                                          'resp_puffs_times_day'
+                                          # ,'resp_measles_suffer'
+                                          ]]
         return a_respiratory_health
 
     def get_b_blood_collection(self):
@@ -194,7 +196,7 @@ class Instruments:
                                                                      'carf_pain2',
                                                                      'carf_pain_action_stopslow',
                                                                      'carf_relief_standstill',
-                                                                     'carf_pain_location',
+                                                                     # 'carf_pain_location',
                                                                      'carf_heartattack',
                                                                      'carf_heartattack_treat',
                                                                      'carf_heartattack_meds',
@@ -253,7 +255,7 @@ class Instruments:
                                               'rspe_high_blood_pressure',
                                               'rspe_tb_diagnosed',
                                               'rspe_tb_treat_past4wks',
-                                              'rspe_infection',
+                                              # 'rspe_infection',
                                               'rspe_participation',
                                               'rspe_wearing_tightclothes',
                                               'rspe_wearing_dentures',
@@ -293,7 +295,7 @@ class Instruments:
                                                                         'carf_cholesterol',
                                                                         'carf_h_cholesterol',
                                                                         'carf_chol_treatment',
-                                                                        'carf_chol_treatment_now',
+                                                                        # 'carf_chol_treatment_now',
                                                                         'carf_chol_treat_specify',
                                                                         'carf_chol_medicine',
                                                                         'carf_chol_traditional']]
@@ -301,11 +303,11 @@ class Instruments:
 
     def get_c_cognition_two(self):
         c_cognition_two = self.data[['study_id',
-                                     'cogn_delayed_recall_note',
-                                     'cogn_delayed_recall',
+                                     # 'cogn_delayed_recall_note',
+                                     # 'cogn_delayed_recall',
                                      'cogn_delayed_recall_score',
-                                     'cogn_word_cognition_note',
-                                     'cogn_word_cognition_list',
+                                     # 'cogn_word_cognition_note',
+                                     # 'cogn_word_cognition_list',
                                      'cogn_recognition_score',
                                      'cogn_different_animals',
                                      'cogn_comments']]
@@ -317,7 +319,7 @@ class Instruments:
                                            'genh_fruit_servings',
                                            'genh_days_veg',
                                            'genh_veg_servings',
-                                           'genh_starchy_staple_food',
+                                           # 'genh_starchy_staple_food',
                                            'genh_starchy_staple_freq',
                                            'genh_staple_servings',
                                            'genh_vendor_meals',
@@ -419,7 +421,7 @@ class Instruments:
                                                                         'genh_cooking_place',
                                                                         'genh_cookingplace_specify',
                                                                         'genh_cooking_done_inside',
-                                                                        'genh_energy_source_type',
+                                                                        # 'genh_energy_source_type',
                                                                         'genh_energy_specify',
                                                                         'genh_smoker_in_your_house',
                                                                         'genh_smoke_freq_someone',
@@ -579,14 +581,14 @@ class Instruments:
                                                 'demo_date_of_birth_known',
                                                 'demo_dob_new',
                                                 'demo_approx_dob_new',
-                                                'test',
-                                                'demo_date_of_birth',
+                                                # 'test',
+                                                # 'demo_date_of_birth',
                                                 'demo_age_at_collection',
                                                 'demo_gender_is_correct',
-                                                'demo_gender_correction',
+                                                # 'demo_gender_correction',
                                                 'demo_gender',
                                                 'home_language_confirmation',
-                                                'home_language',
+                                                # 'home_language',
                                                 'other_home_language',
                                                 'demo_home_language',
                                                 'ethnicity_confirmation',
@@ -597,61 +599,61 @@ class Instruments:
 
     def get_physical_activity_and_sleep(self):
         physical_activity_and_sleep = self.data[['study_id',
-                                                 'gpaq_gpaq_notes'
-                                                 'gpaq_work_days'
-                                                 'gpaq_work_weekend'
-                                                 'gpaq_phy_activity_notes'
-                                                 'gpaq_work_sedentary'
-                                                 'gpaq_work_vigorous'
-                                                 'gpaq_work_vigorous_days'
-                                                 'gpaq_work_vigorous_time'
-                                                 'gpaq_work_vigorous_hrs'
-                                                 'gpaq_work_vigorous_mins'
-                                                 'gpaq_work_moderate'
-                                                 'gpaq_work_moderate_days'
-                                                 'gpaq_work_moderate_time'
-                                                 'gpaq_work_moderate_hrs'
-                                                 'gpaq_work_moderate_mins'
-                                                 'gpaq_work_day_time'
-                                                 'gpaq_work_day_hrs'
-                                                 'gpaq_work_day_mins'
-                                                 'gpaq_travel_notes'
-                                                 'gpaq_transport_phy'
-                                                 'gpaq_transport_phy_days'
-                                                 'gpaq_transport_phy_time'
-                                                 'gpaq_transport_phy_hrs'
-                                                 'gpaq_transport_phy_mins'
-                                                 'gpaq_leisure_phy'
-                                                 'gpaq_leisure_vigorous'
-                                                 'gpaq_leisurevigorous_days'
-                                                 'gpaq_leisurevigorous_time'
-                                                 'gpaq_leisurevigorous_hrs'
-                                                 'gpaq_leisurevigorous_mins'
-                                                 'gpaq_leisuremoderate'
-                                                 'gpaq_leisuremoderate_days'
-                                                 'gpaq_leisuremoderate_time'
-                                                 'gpaq_leisuremoderate_hrs'
-                                                 'gpaq_leisuremoderate_mins'
-                                                 'gpaq_work_day_stng_time'
-                                                 'gpaq_work_day_stng_hrs'
-                                                 'gpaq_work_day_stng_mins'
-                                                 'gpaq_non_work_day_time'
-                                                 'gpaq_non_work_day_hrs'
-                                                 'gpaq_non_work_day_mins'
-                                                 'gpaq_week_sleep_time'
-                                                 'gpaq_week_wakeup_time'
-                                                 'gpaq_weekend_sleep_time'
-                                                 'gpaq_weekend_wakeup_time'
-                                                 'gpaq_sleep_room_pple_num'
-                                                 'gpaq_sleep_room_livestock'
-                                                 'gpaq_sleep_on'
-                                                 'gpaq_mosquito_net_use'
-                                                 'gpaq_feel_alert'
-                                                 'gpaq_sleeping_difficulty'
-                                                 'gpaq_difficulty_staysleep'
-                                                 'gpaq_waking_early_problem'
-                                                 'gpaq_waking_up_tired'
-                                                 'gpaq_sleep_pattern_satis'
+                                                 # 'gpaq_gpaq_notes',
+                                                 # 'gpaq_work_days',
+                                                 'gpaq_work_weekend',
+                                                 # 'gpaq_phy_activity_notes',
+                                                 'gpaq_work_sedentary',
+                                                 'gpaq_work_vigorous',
+                                                 'gpaq_work_vigorous_days',
+                                                 'gpaq_work_vigorous_time',
+                                                 'gpaq_work_vigorous_hrs',
+                                                 'gpaq_work_vigorous_mins',
+                                                 'gpaq_work_moderate',
+                                                 'gpaq_work_moderate_days',
+                                                 'gpaq_work_moderate_time',
+                                                 'gpaq_work_moderate_hrs',
+                                                 'gpaq_work_moderate_mins',
+                                                 'gpaq_work_day_time',
+                                                 'gpaq_work_day_hrs',
+                                                 'gpaq_work_day_mins',
+                                                 # 'gpaq_travel_notes',
+                                                 'gpaq_transport_phy',
+                                                 'gpaq_transport_phy_days',
+                                                 'gpaq_transport_phy_time',
+                                                 'gpaq_transport_phy_hrs',
+                                                 'gpaq_transport_phy_mins',
+                                                 'gpaq_leisure_phy',
+                                                 'gpaq_leisure_vigorous',
+                                                 'gpaq_leisurevigorous_days',
+                                                 'gpaq_leisurevigorous_time',
+                                                 'gpaq_leisurevigorous_hrs',
+                                                 'gpaq_leisurevigorous_mins',
+                                                 'gpaq_leisuremoderate',
+                                                 'gpaq_leisuremoderate_days',
+                                                 'gpaq_leisuremoderate_time',
+                                                 'gpaq_leisuremoderate_hrs',
+                                                 'gpaq_leisuremoderate_mins',
+                                                 'gpaq_work_day_stng_time',
+                                                 'gpaq_work_day_stng_hrs',
+                                                 'gpaq_work_day_stng_mins',
+                                                 'gpaq_non_work_day_time',
+                                                 'gpaq_non_work_day_hrs',
+                                                 'gpaq_non_work_day_mins',
+                                                 'gpaq_week_sleep_time',
+                                                 'gpaq_week_wakeup_time',
+                                                 'gpaq_weekend_sleep_time',
+                                                 'gpaq_weekend_wakeup_time',
+                                                 'gpaq_sleep_room_pple_num',
+                                                 'gpaq_sleep_room_livestock',
+                                                 'gpaq_sleep_on',
+                                                 'gpaq_mosquito_net_use',
+                                                 'gpaq_feel_alert',
+                                                 'gpaq_sleeping_difficulty',
+                                                 'gpaq_difficulty_staysleep',
+                                                 'gpaq_waking_early_problem',
+                                                 'gpaq_waking_up_tired',
+                                                 'gpaq_sleep_pattern_satis',
                                                  'gpaq_sleep_interfere']]
         return physical_activity_and_sleep
 
@@ -694,14 +696,14 @@ class Instruments:
     def get_pregnancy_and_menopause(self):
         pregnancy_and_menopause = self.data[['study_id',
                                              'preg_pregnant',
-                                             'preg_alert',
+                                             # 'preg_alert',
                                              'preg_num_of_pregnancies',
                                              'preg_num_of_live_births',
                                              'preg_birth_control',
                                              'preg_hysterectomy',
                                              'preg_regular_periods',
                                              'preg_last_period_remember',
-                                             'preg_last_period',
+                                             # 'preg_last_period',
                                              'preg_last_period_mon',
                                              'preg_last_period_mon_2',
                                              'preg_period_more_than_yr']]
@@ -713,7 +715,7 @@ class Instruments:
                                    'subs_smoke_100',
                                    'subs_smoke_now',
                                    'subs_smoke_last_hour',
-                                   'subs_smoke_cigarettes',
+                                   # 'subs_smoke_cigarettes', #missing
                                    'subs_smoke_specify',
                                    'subs_smoking_frequency',
                                    'subs_smoke_per_day',
@@ -731,7 +733,7 @@ class Instruments:
 
     def get_trauma(self):
         trauma = self.data[['study_id',
-                            'tram_experienced_events',
+                            # 'tram_experienced_events',
                             'tram_injury_ill_assault',
                             'tram_relative_ill_injured',
                             'tram_deceased',

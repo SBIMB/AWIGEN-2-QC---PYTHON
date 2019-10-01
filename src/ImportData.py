@@ -12,7 +12,7 @@ class ImportData:
     data = {
         'token': token,
         'content': 'report',
-        'report_id':'15960',
+        'report_id': '15960',
         'format': 'csv',
         'type': 'flat',
         'rawOrLabel': 'raw',
@@ -23,10 +23,9 @@ class ImportData:
         'returnFormat': 'json'
     }
 
-    def getRecords(self):
-        r = requests.post(self.url, self.data)
-        pd.read_csv(StringIO(r.text)).to_csv("../resources/data.csv", index=False)
-        return pd.read_csv(StringIO(r.text))
+    r = requests.post(url, data)
+    # save records in a csv file
+    pd.read_csv(StringIO(r.text)).to_csv("../resources/data.csv", index=False)
 
-# importData  = ImportData()
-# importData.getRecords()
+    def get_records(self):
+        return pd.read_csv(StringIO(self.r.text))
