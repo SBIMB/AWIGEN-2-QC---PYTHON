@@ -15,7 +15,7 @@ def main():
     # 2     populate the database
     dataset = pd.read_csv(csv_link)
     populateDatabase = DatabasePopulator.PopulateDatabase(dataset)
-    populateDatabase.add_records_to_database()
+    # populateDatabase.add_records_to_database()
 
     # 3    specify the instrument
     instruments = Instruments.Instruments(csv_link)
