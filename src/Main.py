@@ -15,7 +15,7 @@ def main():
     # 2     populate the database
     dataset = pd.read_csv(csv_link)
     populateDatabase = DatabasePopulator.PopulateDatabase(dataset)
-    populateDatabase.add_records_to_database()
+    # populateDatabase.add_records_to_database()
 
     # 3    specify the instrument
     instruments = Instruments.Instruments(csv_link)
@@ -27,16 +27,17 @@ def main():
     data = merge_data.join_data_frames()
 
     # 5    data analysis
-    dataAnalyser = DataAnalyser(anthropometry)
+    dataAnalyser = DataAnalyser(data)
 
     # 6    add columns to plot pairwise relationships in a dataset
-    # pair_plot = dataAnalyser.set_pair_plot('genh_days_fruit', 'anth_weight', 'anth_hip_circumf_1')
+    pair_plot = dataAnalyser.set_pair_plot('genh_days_fruit', 'anth_weight', 'anth_hip_circumf_1', 'anth_waist_circumf',
+                                           'anth_standing_height')
 
     # 7    list of email addresses. Appended more contacts
     contacts = ['jajawandera@gmail.com', 'u17253129@tuks.co.za']
 
     # 8    list of attachments initialized with the report
-    attachments = [dataAnalyser.get_report()]
+    attachments = [dataAnalyser.get_report(), pair_plot]
 
     # 9     add all the jpeg files to the list
     for plot in dataAnalyser.get_visualizations():

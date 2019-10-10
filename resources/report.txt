@@ -1,11 +1,15 @@
 _________________________________________________________
                MISSING VALUES         
 Columns with missing values 
-['anth_standing_height', 'anth_weight', 'anth_waist_circumf_1', 'anth_waist_circumf_2', 'anth_waist_circumf', 'anth_hip_circumf_1', 'anth_hip_circumf_2', 'anth_hip_circumf', 'anth_measurementcollector']
+['anth_standing_height', 'anth_weight', 'anth_waist_circumf_1', 'anth_waist_circumf_2', 'anth_waist_circumf', 'anth_hip_circumf_1', 'anth_hip_circumf_2', 'anth_hip_circumf', 'anth_measurementcollector', 'genh_days_fruit', 'genh_fruit_servings', 'genh_days_veg', 'genh_veg_servings', 'genh_starchy_staple_freq', 'genh_staple_servings', 'genh_vendor_meals', 'genh_sugar_drinks', 'genh_juice', 'genh_change_diet', 'genh_lose_weight']
 _________________________________________________________
+AEE0M has 1 missing values
+AES0C has 1 missing values
+AGP0D has 2 missing values
 AKK0H has 9 missing values
 AMG0H has 9 missing values
 ARL0W has 9 missing values
+ATJ0Y has 1 missing values
 ATZ0N has 9 missing values
 BAI0L has 9 missing values
 BCN0W has 9 missing values
@@ -15,21 +19,45 @@ BDZ0J has 9 missing values
 BGV0L has 9 missing values
 BHY0R has 9 missing values
 BJH0F has 9 missing values
+BRR0F has 1 missing values
+BRT0H has 1 missing values
+BSA0P has 1 missing values
+BSE0T has 1 missing values
+BSH0X has 1 missing values
+BSK0B has 1 missing values
+BSW0L has 1 missing values
+BTG0Y has 1 missing values
+BTL0E has 1 missing values
+CAE0K has 1 missing values
 CBF0N has 9 missing values
 CCA0K has 9 missing values
+CCW0H has 1 missing values
+CCX0I has 1 missing values
+CDI0W has 1 missing values
+CDM0B has 1 missing values
+CDN0C has 1 missing values
+CEE0T has 1 missing values
 CFE0W has 9 missing values
-CFN0G has 9 missing values
+CFJ0C has 1 missing values
+CFN0G has 20 missing values
 CFX0P has 9 missing values
+CHI0F has 1 missing values
 CJL0M has 9 missing values
+CJQ0R has 1 missing values
+CKS0W has 1 missing values
 CLQ0W has 9 missing values
-CLV0B has 9 missing values
+CLV0B has 10 missing values
 CNP0A has 9 missing values
 CNS0D has 9 missing values
 CPD0P has 9 missing values
 CTA0V has 9 missing values
+CTK0G has 1 missing values
 CVF0D has 9 missing values
+CVS0Q has 1 missing values
 CXC0E has 9 missing values
+CXS0V has 1 missing values
 CZB0H has 9 missing values
+DAJ0T has 1 missing values
 DDZ0Q has 9 missing values
 DEP0I has 9 missing values
 DET0M has 9 missing values
@@ -37,11 +65,17 @@ DFB0W has 9 missing values
 DFK0G has 9 missing values
 DFN0J has 9 missing values
 DFX0S has 9 missing values
+DFY0T has 1 missing values
+DFZ0V has 1 missing values
 DGI0G has 9 missing values
-DIE0G has 9 missing values
+DIA0C has 1 missing values
+DIE0G has 20 missing values
+DJA0E has 1 missing values
 DJE0I has 9 missing values
 DJG0K has 9 missing values
 DKI0P has 9 missing values
+DKW0D has 1 missing values
+DKX0E has 1 missing values
 DMR0D has 9 missing values
 DNW0J has 9 missing values
 DQT0L has 9 missing values
@@ -50,6 +84,9 @@ DQY0Q has 9 missing values
 DRF0A has 9 missing values
 DRL0G has 9 missing values
 DRM0H has 9 missing values
+DRV0P has 1 missing values
+DSC0Y has 1 missing values
+DSD0A has 1 missing values
 
 _________________________________________________________
               OUTLIERS         
@@ -68,6 +105,67 @@ DRZ0T    3.0
 DSC0Y    1.0
 Name: anth_measurementcollector, dtype: float64 
 _________________________________________________________
+study_id
+AKK0H    4.0
+ATJ0Y    4.0
+BET0G    3.0
+BSX0M    4.0
+CAE0K    3.0
+CCJ0V    3.0
+CDM0B    3.0
+CDN0C    3.0
+CJQ0R    3.0
+CNK0V    2.0
+CNP0A    3.0
+CPN0B    2.0
+DCP0E    4.0
+DDZ0Q    4.0
+DET0M    3.0
+DFN0J    1.0
+DGI0G    4.0
+DIA0C    2.0
+DJE0I    4.0
+DKA0G    2.0
+DKE0K    2.0
+DRZ0T    4.0
+DSC0Y    3.0
+Name: genh_starchy_staple_freq, dtype: float64 
+_________________________________________________________
+study_id
+AES0C    4.0
+AGK0Y    7.0
+AMH0I    3.0
+AML0M    5.0
+AMX0Y    3.0
+BCW0E    7.0
+BSK0B    7.0
+CHE0B    3.0
+DKK0R    3.0
+DRV0P    5.0
+Name: genh_vendor_meals, dtype: float64 
+_________________________________________________________
+study_id
+CTA0V    35.0
+Name: genh_sugar_drinks, dtype: float64 
+_________________________________________________________
+study_id
+AFA0K    21.0
+AGJ0X    14.0
+AJM0H    14.0
+AJV0P    12.0
+AMX0Y    14.0
+BET0G    21.0
+CAT0B    14.0
+CCW0H    14.0
+CFJ0C    28.0
+CLQ0W    28.0
+CXS0V    14.0
+DET0M    14.0
+DJE0I    40.0
+DKA0G    14.0
+DRV0P    14.0
+Name: genh_juice, dtype: float64 
+_________________________________________________________
 anth_standing_height		 has no outliers 
 anth_weight		 has no outliers 
 anth_waist_circumf_1		 has no outliers 
@@ -77,6 +175,13 @@ anth_hip_circumf_1		 has no outliers
 anth_hip_circumf_2		 has no outliers 
 anth_hip_circumf		 has no outliers 
 anthropometric_measurements_complete		 has no outliers 
+genh_days_fruit		 has no outliers 
+genh_fruit_servings		 has no outliers 
+genh_days_veg		 has no outliers 
+genh_veg_servings		 has no outliers 
+genh_staple_servings		 has no outliers 
+genh_change_diet		 has no outliers 
+genh_lose_weight		 has no outliers 
 _________________________________________________________
                 COLUMN SUMMARIES             
 _________________________________________________________
@@ -185,3 +290,113 @@ min        0.000000
 75%        2.000000
 max        2.000000
 Name: anthropometric_measurements_complete, dtype: float64 
+_________________________________________________________
+count    139.000000
+mean       3.920863
+std        2.428886
+min        0.000000
+25%        2.000000
+50%        3.000000
+75%        7.000000
+max        7.000000
+Name: genh_days_fruit, dtype: float64 
+_________________________________________________________
+count    139.000000
+mean       2.014388
+std        1.028476
+min        0.000000
+25%        1.000000
+50%        2.000000
+75%        3.000000
+max        5.000000
+Name: genh_fruit_servings, dtype: float64 
+_________________________________________________________
+count    139.000000
+mean       4.539568
+std        2.341392
+min        0.000000
+25%        2.000000
+50%        4.000000
+75%        7.000000
+max        7.000000
+Name: genh_days_veg, dtype: float64 
+_________________________________________________________
+count    102.000000
+mean       2.058824
+std        1.184249
+min        0.000000
+25%        1.000000
+50%        2.000000
+75%        3.000000
+max        6.000000
+Name: genh_veg_servings, dtype: float64 
+_________________________________________________________
+count    138.000000
+mean       6.166667
+std        1.540610
+min        1.000000
+25%        6.000000
+50%        7.000000
+75%        7.000000
+max        7.000000
+Name: genh_starchy_staple_freq, dtype: float64 
+_________________________________________________________
+count    138.000000
+mean       2.246377
+std        0.681471
+min        1.000000
+25%        2.000000
+50%        2.000000
+75%        3.000000
+max        4.000000
+Name: genh_staple_servings, dtype: float64 
+_________________________________________________________
+count    139.000000
+mean       0.669065
+std        1.369378
+min        0.000000
+25%        0.000000
+50%        0.000000
+75%        1.000000
+max        7.000000
+Name: genh_vendor_meals, dtype: float64 
+_________________________________________________________
+count    139.000000
+mean       9.705036
+std        9.042134
+min        0.000000
+25%        2.500000
+50%        7.000000
+75%       14.000000
+max       35.000000
+Name: genh_sugar_drinks, dtype: float64 
+_________________________________________________________
+count    139.000000
+mean       3.748201
+std        6.119692
+min        0.000000
+25%        0.000000
+50%        2.000000
+75%        4.000000
+max       40.000000
+Name: genh_juice, dtype: float64 
+_________________________________________________________
+count    139.000000
+mean       0.309353
+std        0.463898
+min        0.000000
+25%        0.000000
+50%        0.000000
+75%        1.000000
+max        1.000000
+Name: genh_change_diet, dtype: float64 
+_________________________________________________________
+count    139.000000
+mean       0.273381
+std        0.447307
+min        0.000000
+25%        0.000000
+50%        0.000000
+75%        1.000000
+max        1.000000
+Name: genh_lose_weight, dtype: float64 
