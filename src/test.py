@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import math
 
 data = pd.read_csv("../resources/data.csv", index_col=0)
 
