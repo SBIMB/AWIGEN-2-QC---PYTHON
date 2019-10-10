@@ -105,15 +105,15 @@ class DataAnalyser:
     def missing_visualization(self):
         # bar chart
         msno.bar(self.data)
-        plt.savefig('../resources/bar.jpeg', bbox_inches='tight')
+        plt.savefig('../resources/bar.png', bbox_inches='tight')
 
         # correlation
         msno.heatmap(self.data)
-        plt.savefig('../resources/correlation.jpeg', bbox_inches='tight')
+        plt.savefig('../resources/correlation.png', bbox_inches='tight')
 
         # heat map
         sns.heatmap(self.data.isnull(), cbar=False)
-        plt.savefig('../resources/heat_map.jpeg', bbox_inches='tight')
+        plt.savefig('../resources/heat_map.png', bbox_inches='tight')
 
     def set_pair_plot(self, *argv):
         columns_list = []
@@ -138,14 +138,14 @@ class DataAnalyser:
             for j in range(len(y_labels)):
                 g.axes[j, i].xaxis.set_label_text(x_labels[i])
                 g.axes[j, i].yaxis.set_label_text(y_labels[j])
-        plt.savefig('../resources/pair_plot.jpeg', bbox_inches='tight')
+        plt.savefig('../resources/pair_plot.png', bbox_inches='tight')
 
         return '../resources/pair_plot.jpeg'
 
     def get_visualizations(self):
         images = []
         for file in os.listdir("../resources/"):
-            if file.endswith(".jpeg"):
+            if file.endswith(".png"):
                 images.append("../resources/"+file)
         return images
 
