@@ -14,11 +14,11 @@ class DataAnalyser:
         self.data = data.set_index(['study_id'])
         self.categorical = self.data.select_dtypes(include=['object']).copy()
         self.numeric = self.data.select_dtypes(include=['float64', 'int64']).copy()
-        if os.path.exists('../resources/report.txt'):
-            os.remove("../resources/report.txt")
-            self.f = open("../resources/report.txt", "a+")
+        if os.path.exists('../resources/Instrument_report.txt'):
+            os.remove("../resources/Instrument_report.txt")
+            self.f = open("../resources/Instrument_report.txt", "a+")
         else:
-            self.f = open("../resources/report.txt", "a+")
+            self.f = open("../resources/Instrument_report.txt", "a+")
 
     def get_sum_of_isnull(self):
         print(self.data.isna().sum())
@@ -44,62 +44,6 @@ class DataAnalyser:
             self.f.write(str(row.index[0])+' has ' +
                          str(row.isnull().sum(axis=0).sum())+" missing values\n")
         self.f.write("\n")
-
-    def detect_unexpected_integer_values(self, col_name):
-        # Detecting strings
-        cnt = 0
-        for row in self.data[col_name]:
-            try:
-                str(row)
-                self.data.loc[cnt, col_name] = np.nan
-            except ValueError:
-                pass
-            cnt += 1
-
-    def detect_unexpected_string_values(self, col_name):
-        # Detecting strings
-        cnt = 0
-        for row in self.data[col_name]:
-            try:
-                str(row)
-                self.data.loc[cnt, col_name] = np.nan
-            except ValueError:
-                pass
-            cnt += 1
-
-    def check_range_of_values(self, col_name):
-        # select rows that fall out of range. These can also be nulls
-        out_of_range = self.data[self.data[col_name].between(18, 100, inclusive=False) == False]
-        print(out_of_range)
-        return out_of_range
-
-    # find nulls in branching logic values
-    def find_nulls_in_branching_logic(self, col_name1, col_name2):
-        """
-        :param col_name1:
-        :param col_name2:
-        :return:
-        """
-        df = pd.DataFrame()
-        try:
-            null_entries = self.data.loc[self.data[col_name1].isnull().any(axis=1)]
-            df.append(null_entries)
-        except ValueError:
-            pass
-        try:
-            first_category = self.data.loc[(self.data[col_name1] == 'A') &
-                                           (self.data[col_name2].isin(["n/a", "na", "--"]))]
-            df.append(first_category)
-        except ValueError:
-            pass
-        try:
-            second_category = self.data.loc[(self.data[col_name1] == 'B') &
-                                            (self.data[col_name2].notna())]
-            df.append(second_category)
-        except ValueError:
-            pass
-        print(df)
-        return df
 
     # plot missing values
     def missing_visualization(self):
@@ -140,7 +84,7 @@ class DataAnalyser:
                 g.axes[j, i].yaxis.set_label_text(y_labels[j])
         plt.savefig('../resources/pair_plot.png', bbox_inches='tight')
 
-        return '../resources/pair_plot.jpeg'
+        return '../resources/pair_plot.png'
 
     def get_visualizations(self):
         images = []
@@ -162,7 +106,6 @@ class DataAnalyser:
             c = self.numeric[((self.numeric < (q1 - 1.5 * irq)) | (self.numeric > (q3 + 1.5 * irq)))][col].dropna()
             if c.empty:
                 columns_list.append(col)
-                # self.f.write(col+" has no outliers \n")
             else:
                 self.f.write(str(self.numeric[((self.numeric < (q1 - 1.5 * irq)) | (self.numeric > (q3 + 1.5 * irq)))][col].dropna())+" \n")
                 self.f.write(self.separator)

@@ -3,6 +3,7 @@ import DatabasePopulator
 import Instruments
 from MergeHandler import MergeHandler
 from DataAnalyser import DataAnalyser
+from BranchingLogic import BranchingLogicHandler
 import pandas as pd
 import ImportData
 
@@ -27,11 +28,17 @@ def main():
     data = merge_data.join_data_frames()
 
     # 5    data analysis
-    dataAnalyser = DataAnalyser(data)
+    dataAnalyser = DataAnalyser(anthropometry)
 
     # 6    add columns to plot pairwise relationships in a dataset
-    pair_plot = dataAnalyser.set_pair_plot('genh_days_fruit', 'anth_weight', 'anth_hip_circumf_1', 'anth_waist_circumf',
-                                           'anth_standing_height')
+    pair_plot = dataAnalyser.set_pair_plot('anth_standing_height',
+                                           'anth_weight',
+                                           'anth_waist_circumf_1',
+                                           'anth_waist_circumf_2',
+                                           'anth_waist_circumf',
+                                           'anth_hip_circumf_1',
+                                           'anth_hip_circumf_2',
+                                           'anth_hip_circumf')
 
     # 7    list of email addresses. Appended more contacts
     contacts = ['jajawandera@gmail.com', 'u17253129@tuks.co.za']
@@ -43,7 +50,13 @@ def main():
     for plot in dataAnalyser.get_visualizations():
         attachments.append(plot)
 
-    # 10     sending the email
+    # 10  write general report.csv file
+    # add report to attachments
+    branchingLogicHandler = BranchingLogicHandler(csv_link)
+    report_link = branchingLogicHandler.write_report()
+    attachments.append(report_link)
+
+    # 11     sending the email
     emailHandler = EmailHandler.EmailHandler(contacts, attachments)
     emailHandler.send_email()
 
