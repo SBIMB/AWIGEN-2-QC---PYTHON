@@ -54,6 +54,7 @@ def main():
     # add report to attachments
     branchingLogicHandler = BranchingLogicHandler(csv_link)
     report_link = branchingLogicHandler.write_report()
+    branchingLogicHandler.get_report_summary()
     attachments.append(report_link)
 
     # 11     sending the email

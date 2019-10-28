@@ -16,9 +16,28 @@ class BranchingLogicHandler:
 
     def write_report(self):
 
-        ignored_cols = ['ethnolinguistc_available', 'a_phase_1_data_complete', 'gene_site_id',
-                        'demo_approx_dob_is_correct', 'demo_dob_is_correct', 'demo_date_of_birth_known',
-                        'demo_dob_new', 'demo_approx_dob_new']
+        ignored_cols = ['ethnolinguistc_available',
+                        'a_phase_1_data_complete',
+                        'gene_site_id',
+                        'demo_approx_dob_is_correct',
+                        'demo_dob_is_correct',
+                        'demo_date_of_birth_known',
+                        'demo_dob_new',
+                        'demo_approx_dob_new',
+                        'cogn_comments',
+                        'rspe_participation',
+                        'rspe_participation_note',
+                        'spiro_comment',
+                        'rspir_salb_admin',
+                        'rspir_comment',
+                        'ultr_dxa_scan_completed',
+                        'comp_comment_no_14',
+                        'comp_comment_no_15',
+                        'comp_comment_no_16',
+                        'comp_comment_no_17',
+                        'comp_comment_no_18',
+                        'comp_comment_no_19',
+                        'comp_comment_no_20']
 
         instrument_dict = {
             "phas": "a_phase_1_data",
@@ -118,7 +137,9 @@ class BranchingLogicHandler:
                             'hous_other_livestock',
                             'hous_poultry',
                             'hous_tractor',
-                            'hous_plough']
+                            'hous_plough',
+                            'hous_electric_iron',
+                            'hous_fan']
 
         with open('../resources/report.csv', mode='w') as report_file:
             report_writer = csv.writer(report_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -291,12 +312,14 @@ class BranchingLogicHandler:
                         elif col == 'hous_internet_by_computer' and pd.isnull(j[col]) and j['gene_site'] in [1, 2, 5, 6]:
                             report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
 
-                        elif col == 'hous_electric_iron' and pd.isnull(j[col]) and j['gene_site'] in [3, 5]:
+                        elif (col == 'hous_electric_iron' and pd.isnull(j[col])) and j['gene_site'] in [3, 5]:
                             report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
 
-                        elif col in ['hous_fan', 'hous_table', 'hous_sofa', 'hous_bed', 'hous_mattress', 'hous_blankets'] and pd.isnull(j[col]) \
-                                and j['gene_site'] in [3, 4, 5]:
-                            report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
+                        elif col in ['hous_fan', 'hous_table', 'hous_sofa', 'hous_bed', 'hous_mattress', 'hous_blankets']:
+                            if pd.isnull(j[col]) and j['gene_site'] in [3, 4, 5]:
+                                report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
+                            else:
+                                pass
 
                         elif col in ['hous_kerosene_stove', 'hous_electric_plate', 'hous_torch', 'hous_gas_lamp', 'hous_kerosene_lamp', 'hous_wall_clock'] \
                                 and pd.isnull(j[col]) and j['gene_site'] in [3, 4]:
@@ -1054,3 +1077,8 @@ class BranchingLogicHandler:
 
         return '../resources/report.csv'
 
+    def get_report_summary(self):
+        report = pd.read_csv(self.write_report())
+        df = report.groupby('variable_name')['study_id'].nunique()
+        report_summary = pd.DataFrame(df)
+        report_summary.to_csv("../resources/report_summary.csv")
