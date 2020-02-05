@@ -7,11 +7,11 @@ import pandas as pd
 
 class Instruments:
     # df is data_frame in csv format
-    def __init__(self, df):
+    def __init__(self, csv_link):
         # A list of missing value types
         missing_values = ["n/a", "na", "--"]
         # read the csv file
-        self.data = pd.read_csv(df, na_values=missing_values, index_col=None)
+        self.data = pd.read_csv(csv_link, na_values=missing_values, index_col=None)
 
     def get_anthropometric_measurements(self):
         anthropometry = self.data[['study_id',
