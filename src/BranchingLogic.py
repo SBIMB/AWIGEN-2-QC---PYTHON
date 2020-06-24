@@ -1,3 +1,5 @@
+from builtins import print
+
 import pandas as pd
 import csv
 import os
@@ -194,41 +196,54 @@ class BranchingLogicHandler:
 
                     elif col == 'famc_siblings':
                         if pd.isnull(j[col]):
-                            report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
+                            report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'siblings data is missing'])
                         else:
                             pass
 
                     elif col == 'famc_number_of_brothers':
                         if pd.isnull(j[col]) and (j['famc_siblings'] == 0 or pd.isnull(j['famc_siblings'])):
                             pass
-                        elif j[col] >= 0 and j['famc_siblings']==1:
+                        elif j[col] in range(0, 100) and j['famc_siblings'] == 1:
                             pass
+                        elif pd.notnull(j[col]) and j[col] not in range(0, 100) and j['famc_siblings'] == 1:
+                            report_writer.writerow(
+                                [str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'out of range'])
                         else:
                             report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
 
                     elif col == 'famc_living_brothers':
                         if pd.isnull(j[col]) and (pd.isnull(j['famc_number_of_brothers']) or j['famc_number_of_brothers']==0):
                             pass
-                        elif j[col] >= 0:
+                        elif j[col] in range(0, 100):
                             pass
+                        elif pd.notnull(j[col]) and j[col] not in range(0, 100):
+                            report_writer.writerow(
+                                [str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'out of range'])
                         else:
                             report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
 
                     elif col == 'famc_number_of_sisters':
                         if pd.isnull(j[col]) and (j['famc_siblings'] == 0 or pd.isnull(j['famc_siblings'])):
                             pass
-                        elif j[col] >= 0:
+                        elif j[col] in range(0, 100):
                             pass
+                        elif pd.notnull(j[col]) and j[col] not in range(0, 100):
+                            report_writer.writerow(
+                                [str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'out of range'])
                         else:
                             report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
 
                     elif col == 'famc_living_sisters':
                         if pd.isnull(j[col]) and (j['famc_siblings'] == 0 or pd.isnull(j['famc_siblings']) or j['famc_number_of_sisters']==0):
                             pass
-                        elif j[col] >= 0:
+                        elif j[col] in range(0, 100):
                             pass
+                        elif pd.notnull(j[col]) and j[col] not in range(0, 100):
+                            report_writer.writerow(
+                                [str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'out of range'])
                         else:
-                            report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
+                            report_writer.writerow(
+                                [str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
 
                     elif col == 'famc_children':
                         if pd.isnull(j[col]):
@@ -239,20 +254,28 @@ class BranchingLogicHandler:
                     elif col in ['famc_bio_sons', 'famc_bio_daughters']:
                         if pd.isnull(j[col]) and (j['famc_children'] == 0 or pd.isnull(j['famc_children'])):
                             pass
-                        elif j[col] >= 0:
+                        elif j[col] in range(0, 100):
                             pass
+                        elif pd.notnull(j[col]) and j[col] not in range(0, 100):
+                            report_writer.writerow(
+                                [str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'out of range'])
                         else:
-                            report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
+                            report_writer.writerow(
+                                [str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
 
                     elif col in ['famc_living_bio_sons', 'famc_living_bio_daughters']:
                         if (col == 'famc_living_bio_sons' and pd.isnull(j[col])) and (j['famc_bio_sons'] == 0 or pd.isnull(j['famc_bio_sons'])):
                             pass
                         elif (col == 'famc_living_bio_daughters' and pd.isnull(j[col])) and (j['famc_bio_daughters'] == 0 or pd.isnull(j['famc_bio_daughters'])):
                             pass
-                        elif j[col] >= 0:
+                        elif j[col] in range(0, 100):
                             pass
+                        elif pd.notnull(j[col]) and j[col] not in range(0, 100):
+                            report_writer.writerow(
+                                [str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'out of range'])
                         else:
-                            report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
+                            report_writer.writerow(
+                                [str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
 
                     elif col in pregnancy_cols:
                         if pd.isnull(j[col]) and (j['demo_gender'] == 1 or pd.isnull(j['demo_gender'])):
@@ -261,17 +284,31 @@ class BranchingLogicHandler:
                             if col == 'preg_num_of_pregnancies':
                                 report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
                             elif col == 'preg_num_of_live_births' and j['preg_num_of_pregnancies'] > 0:
-                                print(i, col, "missing vlaue")
-                            elif (col == 'preg_last_period_mon' or col == 'preg_last_period_mon_2') and j['preg_last_period_remember'] == 1:
-                                print(i, col, "misssing value")
+                                report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
+                            elif col in ['preg_last_period_mon', 'preg_last_period_mon_2'] and j['preg_last_period_remember'] == 1:
+                                report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
                             elif col == 'preg_period_more_than_yr' and (j['preg_last_period_remember'] == 0 or j['preg_last_period_remember'] == 2):
                                 report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
+                        elif pd.notnull(j[col]) and j['preg_pregnant'] == 0:
+                            if col in ['preg_num_of_pregnancies', 'preg_num_of_live_births']:
+                                if j[col] in range(0, 37):
+                                    pass
+                                elif j[col] not in range(0, 37):
+                                    report_writer.writerow(
+                                        [str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'out of range'])
                         else:
                             pass
 
                     elif col in ['educ_highest_years', 'educ_formal_years', 'empl_days_work']:
-                        if col == 'educ_highest_years' and pd.isnull(j[col]) and j['educ_highest_level'] in [2, 3, 4]:
-                            report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
+                        if col == 'educ_highest_years' and j['educ_highest_level'] in [2, 3, 4]:
+                            if j[col] in range(1, 21):
+                                pass
+                            elif pd.isnull(j[col]):
+                                report_writer.writerow(
+                                    [str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
+                            elif j[col] not in range(1, 21):
+                                report_writer.writerow(
+                                    [str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'out of range'])
                         elif col == 'educ_formal_years' and pd.isnull(j[col]) and j['educ_highest_level'] in [2, 3, 4]:
                             report_writer.writerow([str(i), str(instrument_dict.get(col[:4])), str(col), '1', 'missing value'])
                         elif col == 'empl_days_work' and pd.isnull(j[col]) and j['empl_status'] in [2, 3, 4]:

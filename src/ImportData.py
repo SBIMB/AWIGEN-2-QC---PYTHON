@@ -6,15 +6,14 @@ from io import StringIO
 
 class ImportData:
 
-    # constructor
     # Connection requirements --unique for every data set
     def __init__(self):
-        self.token = os.environ.get('REDCAP_TOKEN')
+        self.token = os.environ.get('SOWETO_REDCAP_TOKEN')
         self.url = 'https://redcap.core.wits.ac.za/redcap/api/'
 
         # specify the token and report id for report content
         self.data = {
-            'token': '848A14BA0F69E7394EC22D7BC810BDFE',
+            'token': self.token,
             'content': 'report',
             'format': 'csv',
             'report_id': '15960',

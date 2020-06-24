@@ -15,11 +15,11 @@ class EmailHandler:
 
     def send_email(self):
         msg = EmailMessage()
-        msg['Subject'] = 'REDCap Soweto Report'
+        msg['Subject'] = 'AWI-Gen 2 REDCap Report'
         msg['From'] = self.EMAIL_ADDRESS
         msg['To'] = ', '.join(self.contacts)
 
-        msg.set_content("This is the content in the report")
+        msg.set_content("Hi, Your weekly report is attached to this email")
 
         for file in self.attachments:
             with open(file, 'rb') as f:

@@ -10,12 +10,13 @@ import ImportData
 
 def main():
     # 1     fetch data
+    # takes some time
     importData = ImportData.ImportData()
     csv_link = importData.get_records()
 
     # 2     populate the database
     dataset = pd.read_csv(csv_link)
-    populateDatabase = DatabasePopulator.PopulateDatabase(dataset)
+    # populateDatabase = DatabasePopulator.PopulateDatabase(dataset)
     # populateDatabase.add_records_to_database()
 
     # 3    specify the instrument
