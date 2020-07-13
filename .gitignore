@@ -1,5 +1,6 @@
 # resources folder
 resources/*.jpeg
+resources/*hist.png
 resources/*.txt
 
 # Byte-compiled / optimized / DLL files
@@ -106,3 +107,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# VS Code
+.vscode/launch.json

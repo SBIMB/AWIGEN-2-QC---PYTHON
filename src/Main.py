@@ -1,66 +1,69 @@
 import EmailHandler
-import DatabasePopulator
+#import DatabasePopulator
 import Instruments
 from MergeHandler import MergeHandler
 from DataAnalyser import DataAnalyser
 from BranchingLogic import BranchingLogicHandler
-import pandas as pd
 import ImportData
+
+import pandas as pd
+
+import xlsxwriter
 
 
 def main():
     # 1     fetch data
     # takes some time
-    importData = ImportData.ImportData()
-    csv_link = importData.get_records()
 
+    #importData = ImportData.ImportData()
+    #csv_link = importData.get_records()
+
+    csv_link = './resources/data.csv'
     # 2     populate the database
-    dataset = pd.read_csv(csv_link)
     # populateDatabase = DatabasePopulator.PopulateDatabase(dataset)
     # populateDatabase.add_records_to_database()
 
-    # 3    specify the instrument
-    instruments = Instruments.Instruments(csv_link)
-    anthropometry = instruments.get_anthropometric_measurements()
-    health_diet = instruments.get_c_general_health_diet()
+    dataSet = pd.read_csv(csv_link, na_values=["n/a", "na", "--"], index_col=None)
 
     # 4    merge instruments
-    merge_data = MergeHandler(anthropometry, health_diet)
-    data = merge_data.join_data_frames()
+    #merge_data = MergeHandler(anthropometry, health_diet)
+    #data = merge_data.join_data_frames()
 
+    # 3    specify the instrument
+    instruments = Instruments.Instruments(dataSet)
+
+    # Create Excel Writer to write to xlsx file
+    excelWriter = pd.ExcelWriter('./resources/' + 'outliers.xlsx', engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
+    workbook  = excelWriter.book
+    
     # 5    data analysis
-    dataAnalyser = DataAnalyser(anthropometry)
+    for instrument_key, instrument_getter in instruments.instrument_getters.items():
+        instrument_data = instrument_getter(instruments)
+        DataAnalyser(instrument_data, instrument_key, './resources/', excelWriter).outliers()
 
-    # 6    add columns to plot pairwise relationships in a dataset
-    pair_plot = dataAnalyser.set_pair_plot('anth_standing_height',
-                                           'anth_weight',
-                                           'anth_waist_circumf_1',
-                                           'anth_waist_circumf_2',
-                                           'anth_waist_circumf',
-                                           'anth_hip_circumf_1',
-                                           'anth_hip_circumf_2',
-                                           'anth_hip_circumf')
+    # Save xlsx file
+    excelWriter.save()
 
     # 7    list of email addresses. Appended more contacts
-    contacts = ['jajawandera@gmail.com', 'u17253129@tuks.co.za']
+    # contacts = ['jajawandera@gmail.com', 'u17253129@tuks.co.za']
 
-    # 8    list of attachments initialized with the report
-    attachments = [dataAnalyser.get_report(), pair_plot]
+    # # 8    list of attachments initialized with the report
+    # attachments = [dataAnalyser.get_report(), pair_plot]
 
-    # 9     add all the jpeg files to the list
-    for plot in dataAnalyser.get_visualizations():
-        attachments.append(plot)
+    # # 9     add all the jpeg files to the list
+    # for plot in dataAnalyser.get_visualizations():
+    #     attachments.append(plot)
 
-    # 10  write general report.csv file
-    # add report to attachments
-    branchingLogicHandler = BranchingLogicHandler(csv_link)
-    report_link = branchingLogicHandler.write_report()
-    branchingLogicHandler.get_report_summary()
-    attachments.append(report_link)
+    # # 10  write general report.csv file
+    # # add report to attachments
+    # branchingLogicHandler = BranchingLogicHandler(csv_link)
+    # report_link = branchingLogicHandler.write_report()
+    # branchingLogicHandler.get_report_summary()
+    # attachments.append(report_link)
 
     # 11     sending the email
-    emailHandler = EmailHandler.EmailHandler(contacts, attachments)
-    emailHandler.send_email()
+    # emailHandler = EmailHandler.EmailHandler(contacts, attachments)
+    # emailHandler.send_email()
 
 
 if __name__ == '__main__':
