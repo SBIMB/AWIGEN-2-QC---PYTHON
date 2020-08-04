@@ -14,35 +14,33 @@ import xlsxwriter
 def main():
     # 1     fetch data
     # takes some time
+    outputDir = './resources/'
 
-    #importData = ImportData.ImportData()
-    #csv_link = importData.get_records()
+    # csv_link = ImportData.ImportData(outputDir).get_records()
 
-    csv_link = './resources/data.csv'
     # 2     populate the database
     # populateDatabase = DatabasePopulator.PopulateDatabase(dataset)
     # populateDatabase.add_records_to_database()
 
+
+    csv_link = outputDir + 'data_soweto.csv'
+
     dataSet = pd.read_csv(csv_link, na_values=["n/a", "na", "--"], index_col=None)
 
-    # 4    merge instruments
-    #merge_data = MergeHandler(anthropometry, health_diet)
-    #data = merge_data.join_data_frames()
-
-    # 3    specify the instrument
+    # # 3    specify the instrument
     instruments = Instruments.Instruments(dataSet)
 
-    # Create Excel Writer to write to xlsx file
-    excelWriter = pd.ExcelWriter('./resources/' + 'outliers.xlsx', engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
-    workbook  = excelWriter.book
-    
-    # 5    data analysis
-    for instrument_key, instrument_getter in instruments.instrument_getters.items():
-        instrument_data = instrument_getter(instruments)
-        DataAnalyser(instrument_data, instrument_key, './resources/', excelWriter).outliers()
+    # # Generate outlier report
+    outliers_writer = pd.ExcelWriter(outputDir + 'outliers_soweto.xlsx', engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
+    DataAnalyser(outputDir, instruments, outliers_writer).outliers()
+    outliers_writer.save()
 
-    # Save xlsx file
-    excelWriter.save()
+    # Generate missing report
+    # missing_writer = pd.ExcelWriter(outputDir + 'missing_soweto.xlsx', engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
+    # BranchingLogicHandler(outputDir, csv_link, missing_writer).write_report()
+    # missing_writer.save()
+
+    # branchingLogicHandler.get_report_summary()
 
     # 7    list of email addresses. Appended more contacts
     # contacts = ['jajawandera@gmail.com', 'u17253129@tuks.co.za']
@@ -55,9 +53,6 @@ def main():
     #     attachments.append(plot)
 
     # # 10  write general report.csv file
-    # # add report to attachments
-    # branchingLogicHandler = BranchingLogicHandler(csv_link)
-    # report_link = branchingLogicHandler.write_report()
     # branchingLogicHandler.get_report_summary()
     # attachments.append(report_link)
 
