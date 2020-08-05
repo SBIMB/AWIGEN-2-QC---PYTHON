@@ -7,15 +7,10 @@ import pandas as pd
 
 class Instruments:
 
-    # df is data_frame in csv format
-    def __init__(self, dataSet=None, csv_link=None):
-        # Read the csv file if no data set has been passed in
-        if dataSet is None:
-            # A list of missing value types
-            missing_values = ["n/a", "na", "--"]
-            self.data = pd.read_csv(csv_link, na_values=missing_values, index_col=None)
-        else:
-            self.data = dataSet
+    def __init__(self, csv_link):
+        # A list of missing value types
+        missing_values = ["n/a", "na", "--"]
+        self.data = pd.read_csv(csv_link, na_values=missing_values, index_col=None)
 
     def get_anthropometric_measurements(self):
         colNames = self.data.columns[self.data.columns.str.contains('anth')]
@@ -59,7 +54,7 @@ class Instruments:
     def get_a_general_health_cancer(self):
         colNames = self.data.columns[(self.data.columns.str.contains('genh')) &
                                      (self.data.columns.str.contains('cancer')) &
-                                     ~(self.data.columns.str.contains('mom')) & 
+                                     ~(self.data.columns.str.contains('mom')) &
                                      ~(self.data.columns.str.contains('dad')) ]
         colNames = colNames.insert(0,'study_id')
 
@@ -195,7 +190,7 @@ class Instruments:
                                            'genh_days_fruit',
                                            'genh_fruit_servings',
                                            'genh_days_veg',
-                                           'genh_veg_servings',
+                                           # 'genh_veg_servings',   #not in Agincourt
                                            # 'genh_starchy_staple_food',
                                            'genh_starchy_staple_freq',
                                            'genh_staple_servings',
@@ -266,10 +261,11 @@ class Instruments:
                                                                       'carf_joints_involved',
                                                                       'carf_when_they_hurt',
                                                                       'carf_symptoms_how_long',
-                                                                      'carf_arthritis_results',
+                                                                      #'carf_arthritis_results',   #not in Agincourt
                                                                       'carf_rheumatoid_factor',
                                                                       'carf_acpa',
-                                                                      'carf_esr_crp']]
+                                                                      'carf_esr_crp'
+                                                                      ]]
         return d_cardiometabolic_risk_factors_kidney_thyroid_ra
 
     def get_d_general_health_exposure_to_pesticides_pollutants(self):
@@ -327,7 +323,7 @@ class Instruments:
     def get_participant_identification(self):
         colNames = self.data.columns[(self.data.columns.str.contains('gene_')) |
                                      (self.data.columns.str.contains('demo_')) |
-                                     (self.data.columns.str.contains('language')) | 
+                                     (self.data.columns.str.contains('language')) |
                                      (self.data.columns.str.contains('ethnicity')) ]
         colNames = colNames.insert(0,'study_id')
 
@@ -377,33 +373,33 @@ class Instruments:
         return ultrasound_and_dxa_measurements
 
     instrument_getters = {
-        'anth' : get_anthropometric_measurements,
-        'ultr' : get_ultrasound_and_dxa_measurements,
-        'gpaq' : get_physical_activity_and_sleep,
-        'bppm' : get_blood_pressure_and_pulse_measurements,
-        'cogn' : get_a_cognition_one,
-        'bloc_u' : get_c_urine_collection,
-        'bloc_b' :get_b_blood_collection,
-        'micr' : get_a_microbiome,
-        'resp' : get_a_respiratory_health,
-        'carf_hyp_chol' : get_c_cardiometabolic_risk_factors_hypertension_choles,
-        'carf_kid_thy' : get_d_cardiometabolic_risk_factors_kidney_thyroid_ra,
-        'carf_diab' : get_a_cardiometabolic_risk_factors_diabetes,
-        'cerf_heart' : get_b_cardiometabolic_risk_factors_heart_conditions,
-        'hous' : get_household_attributes,
-        'spiro' : get_c_spirometry_test,
-        'famc' : get_family_composition,
-        'diet' : get_c_general_health_diet,
-        'exposure' : get_d_general_health_exposure_to_pesticides_pollutants,
-        'famh' : get_b_general_health_family_history,
-        'frai' : get_b_frailty_measurements,
-        'cancer' : get_a_general_health_cancer,
-        'rspe' : get_b_spirometry_eligibility,
-        'civil' : get_civil_status_marital_status_education_employment,
-        'rspir' : get_d_reversibility_test,
-        'infh' : get_infection_history,
-        'poc' : get_point_of_care_testing,
-        'preg' : get_pregnancy_and_menopause,
-        'subs' : get_substance_use,
-        'tram' : get_trauma
+        'anthropometric_measurements' : get_anthropometric_measurements,
+        'b_blood_collection' :get_b_blood_collection,
+        'c_urine_collection' : get_c_urine_collection,
+        'blood_pressure_and_pulse_measurements' : get_blood_pressure_and_pulse_measurements,
+        'a_general_health_cancer' : get_a_general_health_cancer,
+        'c_cardiometabolic_risk_factors_hypertension_choles' : get_c_cardiometabolic_risk_factors_hypertension_choles,
+        'd_cardiometabolic_risk_factors_kidney_thyroid' : get_d_cardiometabolic_risk_factors_kidney_thyroid_ra,
+        'a_cardiometabolic_risk_factors_diabetes' : get_a_cardiometabolic_risk_factors_diabetes,
+        'b_cardiometabolic_risk_factors_heart_conditions' : get_b_cardiometabolic_risk_factors_heart_conditions,
+        'civil_status_marital_status_education_employment' : get_civil_status_marital_status_education_employment,
+        'a_cognition' : get_a_cognition_one,
+        'c_general_health_diet' : get_c_general_health_diet,
+        'd_general_health_exposure' : get_d_general_health_exposure_to_pesticides_pollutants,
+        'family_composition' : get_family_composition,
+        'b_general_health_family_history' : get_b_general_health_family_history,
+        'b_frailty_measurements' : get_b_frailty_measurements,
+        'physical_activity_and_sleep' : get_physical_activity_and_sleep,
+        'household_attributes' : get_household_attributes,
+        'infection_history' : get_infection_history,
+        'a_microbiome' : get_a_microbiome,
+        'pregnancy_and_menopause' : get_pregnancy_and_menopause,
+        'point_of_care_testing' : get_point_of_care_testing,
+        'a_respiratory_health' : get_a_respiratory_health,
+        'b_spirometry_eligibility' : get_b_spirometry_eligibility,
+        'd_reversibility_test' : get_d_reversibility_test,
+        'c_spirometry_test' : get_c_spirometry_test,
+        'substance_use' : get_substance_use,
+        'trauma' : get_trauma,
+        'ultrasound_and_dxa_measurements' : get_ultrasound_and_dxa_measurements,
     }

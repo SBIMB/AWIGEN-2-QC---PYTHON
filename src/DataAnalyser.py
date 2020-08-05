@@ -13,39 +13,12 @@ sns.set(style="ticks")
 
 class DataAnalyser:
 
-    def __init__(self, data, instrument_key, resource_dir, excel_writer):
+    def __init__(self, resource_dir, instruments, excel_writer):
         self.separator = "________________________________________________________________________________\n"
-        
-        self.data = data.set_index(['study_id'])
-        self.categorical = self.data.select_dtypes(include=['object']).copy()
-        self.numeric = self.data.select_dtypes(include=[np.number]).copy()
 
-        self.key = instrument_key
+        self.instruments = instruments
         self.excelWriter = excel_writer
         self.resource_dir = resource_dir
-
-
-        # if os.path.exists(resource_dir + 'Instrument_report.txt'):
-        #     os.remove(resource_dir + "Instrument_report.txt")
-        #     self.f = open(resource_dir + "Instrument_report.txt", "a+")
-        # else:
-        #     self.f = open(resource_dir + "Instrument_report.txt", "a+")
-
-    # def write_line(self, line):
-    #     self.f.write(line + "\n")
-
-    def get_sum_of_isnull(self):
-        print(self.data.isna().sum())
-        return self.data.isna().sum()
-
-    # def get_column_summary(self):
-    #     """
-    #     get summary of all the columns
-    #     """
-    #     self.f.write("                COLUMN SUMMARIES             \n")
-    #     for column in self.data.columns:
-    #         self.f.write(self.separator)
-    #         self.f.write(str(self.data[column].describe())+' '+"\n")
 
     # def get_records_with_missing_values(self):
     #     self.f.write(self.separator)
@@ -63,49 +36,49 @@ class DataAnalyser:
     #         ids = self.data[mask].index.tolist()
     #         string = (col + "\t" + str(mask.sum()) + " " + " ".join(ids) + "\n").expandtabs(40)
     #         self.f.write(string)
-        
+
     #     self.f.write("\n")
 
     # plot missing values
-    def missing_visualization(self):
-        # bar chart
-        msno.bar(self.data)
-        plt.savefig(self.resource_dir + 'bar.png', bbox_inches='tight')
+    # def missing_visualization(self):
+    #     # bar chart
+    #     msno.bar(self.data)
+    #     plt.savefig(self.resource_dir + 'bar.png', bbox_inches='tight')
 
-        # correlation
-        msno.heatmap(self.data)
-        plt.savefig(self.resource_dir + 'correlation.png', bbox_inches='tight')
+    #     # correlation
+    #     msno.heatmap(self.data)
+    #     plt.savefig(self.resource_dir + 'correlation.png', bbox_inches='tight')
 
-        # heat map
-        sns.heatmap(self.data.isnull(), cbar=False)
-        plt.savefig(self.resource_dir + 'heat_map.png', bbox_inches='tight')
+    #     # heat map
+    #     sns.heatmap(self.data.isnull(), cbar=False)
+    #     plt.savefig(self.resource_dir + 'heat_map.png', bbox_inches='tight')
 
-    def set_pair_plot(self, *argv):
-        columns_list = []
-        for arg in argv:
-            columns_list.append(arg)
-        dataset = self.data[columns_list]
-        df = dataset.select_dtypes(include=['float64', 'int64']).copy()
+    # def set_pair_plot(self, *argv):
+    #     columns_list = []
+    #     for arg in argv:
+    #         columns_list.append(arg)
+    #     dataset = self.data[columns_list]
+    #     df = dataset.select_dtypes(include=['float64', 'int64']).copy()
 
-        g = sns.PairGrid(df)
-        g = g.map(plt.scatter)
+    #     g = sns.PairGrid(df)
+    #     g = g.map(plt.scatter)
 
-        x_labels, y_labels = [], []
+    #     x_labels, y_labels = [], []
 
-        for ax in g.axes[-1, :]:
-            x_label = ax.xaxis.get_label_text()
-            x_labels.append(x_label)
-        for ax in g.axes[:, 0]:
-            y_label = ax.yaxis.get_label_text()
-            y_labels.append(y_label)
+    #     for ax in g.axes[-1, :]:
+    #         x_label = ax.xaxis.get_label_text()
+    #         x_labels.append(x_label)
+    #     for ax in g.axes[:, 0]:
+    #         y_label = ax.yaxis.get_label_text()
+    #         y_labels.append(y_label)
 
-        for i in range(len(x_labels)):
-            for j in range(len(y_labels)):
-                g.axes[j, i].xaxis.set_label_text(x_labels[i])
-                g.axes[j, i].yaxis.set_label_text(y_labels[j])
-        plt.savefig(self.resource_dir + 'pair_plot.png', bbox_inches='tight')
+    #     for i in range(len(x_labels)):
+    #         for j in range(len(y_labels)):
+    #             g.axes[j, i].xaxis.set_label_text(x_labels[i])
+    #             g.axes[j, i].yaxis.set_label_text(y_labels[j])
+    #     plt.savefig(self.resource_dir + 'pair_plot.png', bbox_inches='tight')
 
-        return self.resource_dir + 'pair_plot.png'
+    #     return self.resource_dir + 'pair_plot.png'
 
     def get_visualizations(self):
         images = []
@@ -178,19 +151,9 @@ class DataAnalyser:
         return fig_title
         #plt.show()
 
-    def outliers(self):
-        # self.f.write(self.separator)
-        # self.f.write("FIELD STATS AND OUTLIERS \n")
-        # self.f.write("Outliers: Values outside the range (Q1 - 1.5 * IQR, Q3 + 1.5 * IQR) \n")
-        # self.f.write(self.separator)
-        # self.f.write(self.separator)
-
-        excel_col = 0
-        excel_row = 0
-        sorted_cols = self.numeric.sort_index(axis=1) #Sort columns by name
-
-        for col in sorted_cols:
-            data = self.data[col]
+    def instrument_outliers(self, instrument_data, data_frame, instrument_key):
+        for col in instrument_data.columns:
+            data = instrument_data[col]
 
             # Skip iteration if all data is NaN
             if data.dropna().size == 0:
@@ -205,58 +168,50 @@ class DataAnalyser:
 
             # Skip iteration if IQR = 0
             if iqr == 0:
-                # self.f.write('No outliers \n')
-                # self.f.write(self.separator)
                 continue
 
+            upper_limit = q3 + 1.5 * iqr
+            lower_limit = q1 - 1.5 * iqr
+
             # Find outliers i.e. values outside the range (q1 - 1.5 * iqr, q3 + 1.5 * iqr)
-            mask = data.between(q1 - 1.5 * iqr, q3 + 1.5 * iqr, inclusive=True)
+            mask = data.between(lower_limit, upper_limit, inclusive=True)
             outliers = data[~mask].dropna()
 
             # Skip iteration if there are no outliers
             if outliers.size == 0:
                 continue
 
-            # self.write_line("Field: " + col)
-            # self.write_line("Data type: " + data.dtype.name + "\n")
+            outliers = outliers.to_frame()
 
-            # self.f.write(str("Mean =\t" + str(mean) + "\n").expandtabs(20))
-            # self.f.write(str("Std deviation =\t" + str(std) + "\n").expandtabs(20))
-            # self.f.write(str("Median =\t" + str(median) + "\n").expandtabs(20))
-            # self.f.write(str("Q1 =\t" + str(q1) + "\n").expandtabs(20))
-            # self.f.write(str("Q3 =\t" + str(q3) + "\n").expandtabs(20))
-            # self.f.write(str("IQR =\t" + str(np.round(iqr, 1)) + "\n" + "\n").expandtabs(20))
+            outliers.rename(columns={col:'Value'}, inplace=True)
+            outliers['Data Field'] = col
+            outliers['Instrument'] = instrument_key
+            outliers['Median'] = median
 
-            # Save histogram to .png
-            fig_title = self.plot_histogram(data, col, outliers)
+            outliers['Limit'] = np.where( ( outliers['Value'] >= upper_limit ), upper_limit, lower_limit )
+            outliers['Comment'] = ''
 
-            # Write outliers to excel tab starting at excel_row
-            outliers.to_excel(self.excelWriter, sheet_name=self.key, startcol=excel_col, startrow=excel_row)
-            
-            # Get the current excel tab
-            self.worksheet = self.excelWriter.sheets[self.key]
+            data_frame = data_frame.append(outliers)
 
-            # Make the column with the field name wider
-            self.worksheet.set_column(excel_col+1, excel_col+1 , 30)
+        return data_frame
 
-            #  Insert the histogram .png next to the outliers
-            self.worksheet.insert_image(excel_row, excel_col+2, fig_title, {'x_scale': 0.5, 'y_scale': 0.5})
+    def outliers(self):
+        df = pd.DataFrame()
 
-            #Increment the row for the next field
-            excel_row += max(18, outliers.size+2)
+        for instrument_key, instrument_getter in self.instruments.instrument_getters.items():
+            instrument_data = instrument_getter(self.instruments)
+            instrument_data.set_index(['study_id'], inplace=True)
+            instrument_data = instrument_data.select_dtypes(include=np.number)
+            df = self.instrument_outliers(instrument_data, df, instrument_key)
 
-            # self.write_line(str(outliers.to_string(header=False)))
-            # self.f.write(self.separator)
-
-        # self.excelWriter.save()
-
-        # self.f.write(self.separator)
-
-
-    def generate_report(self):
-        #self.missing_visualization()
-        #self.get_records_with_missing_values()
-        self.outliers()
-        #self.get_column_summary()
-        #self.f.close()
-        #return self.f.name
+        df = df[['Data Field', 'Instrument', 'Value', 'Median', 'Limit', 'Comment']]
+        df = df.sort_values(by=['study_id', 'Instrument'])
+        df.reset_index(inplace=True)
+        df.to_excel(self.excelWriter, sheet_name='Outliers', startcol=0, startrow=0, index=False)
+        self.excelWriter.sheets['Outliers'].set_column(0, 0 , 15)
+        self.excelWriter.sheets['Outliers'].set_column(1, 1 , 30)
+        self.excelWriter.sheets['Outliers'].set_column(2, 2 , 30)
+        self.excelWriter.sheets['Outliers'].set_column(3, 3 , 10)
+        self.excelWriter.sheets['Outliers'].set_column(4, 4 , 10)
+        self.excelWriter.sheets['Outliers'].set_column(5, 5 , 10)
+        self.excelWriter.sheets['Outliers'].set_column(6, 6 , 20)

@@ -25,10 +25,8 @@ def main():
 
     csv_link = outputDir + 'data_soweto.csv'
 
-    dataSet = pd.read_csv(csv_link, na_values=["n/a", "na", "--"], index_col=None)
-
     # # 3    specify the instrument
-    instruments = Instruments.Instruments(dataSet)
+    instruments = Instruments.Instruments(csv_link)
 
     # # Generate outlier report
     outliers_writer = pd.ExcelWriter(outputDir + 'outliers_soweto.xlsx', engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
@@ -36,9 +34,9 @@ def main():
     outliers_writer.save()
 
     # Generate missing report
-    # missing_writer = pd.ExcelWriter(outputDir + 'missing_soweto.xlsx', engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
-    # BranchingLogicHandler(outputDir, csv_link, missing_writer).write_report()
-    # missing_writer.save()
+    missing_writer = pd.ExcelWriter(outputDir + 'missing_soweto.xlsx', engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
+    BranchingLogicHandler(outputDir, csv_link, missing_writer).write_report()
+    missing_writer.save()
 
     # branchingLogicHandler.get_report_summary()
 
