@@ -170,8 +170,14 @@ class DataAnalyser:
             if iqr == 0:
                 continue
 
-            upper_limit = q3 + 1.5 * iqr
-            lower_limit = q1 - 1.5 * iqr
+            upper_limit_iqr = q3 + 1.5 * iqr
+            lower_limit_iqr = q1 - 1.5 * iqr
+
+            upper_limit_std = mean + std * 3
+            lower_limit_std = mean - std * 3
+
+            upper_limit = max(upper_limit_iqr, upper_limit_std)
+            lower_limit = min(lower_limit_iqr, lower_limit_std)
 
             # Find outliers i.e. values outside the range (q1 - 1.5 * iqr, q3 + 1.5 * iqr)
             mask = data.between(lower_limit, upper_limit, inclusive=True)
@@ -186,32 +192,48 @@ class DataAnalyser:
             outliers.rename(columns={col:'Value'}, inplace=True)
             outliers['Data Field'] = col
             outliers['Instrument'] = instrument_key
-            outliers['Median'] = median
+            # outliers['Median'] = median
+            outliers['Lower Limit'] = lower_limit
+            outliers['Upper Limit'] = upper_limit
 
-            outliers['Limit'] = np.where( ( outliers['Value'] >= upper_limit ), upper_limit, lower_limit )
-            outliers['Comment'] = ''
+            # outliers['Limit'] = np.where( ( outliers['Value'] >= upper_limit ), upper_limit, lower_limit )
+            # outliers['Comment'] = ''
 
             data_frame = data_frame.append(outliers)
 
         return data_frame
 
     def outliers(self):
+
         df = pd.DataFrame()
 
-        for instrument_key, instrument_getter in self.instruments.instrument_getters.items():
+        for instrument_key, instrument_getter in self.instruments.instrument_dict.items():
+            if instrument_key == 'ethnolinguistic_information':
+                continue
             instrument_data = instrument_getter(self.instruments)
             instrument_data.set_index(['study_id'], inplace=True)
             instrument_data = instrument_data.select_dtypes(include=np.number)
             df = self.instrument_outliers(instrument_data, df, instrument_key)
 
-        df = df[['Data Field', 'Instrument', 'Value', 'Median', 'Limit', 'Comment']]
+        df['Is Correct'] = ''
+        df['Comment'] = ''
+        df = df[['Data Field', 'Instrument', 'Value', 'Lower Limit', 'Upper Limit', 'Is Correct', 'Comment']]
         df = df.sort_values(by=['study_id', 'Instrument'])
         df.reset_index(inplace=True)
-        df.to_excel(self.excelWriter, sheet_name='Outliers', startcol=0, startrow=0, index=False)
+        df.to_excel(self.excelWriter, sheet_name='Outliers', startcol=0, startrow=3, index=False)
+
+        lower_limit_text = 'Lower Limit = min(mean - std * 3, 1st quartile - 1.5 * IQR)'
+        upper_limit_text = 'Upper Limit = max(mean + std * 3, 3rd quartile + 1.5 * IQR)'
+
+        self.excelWriter.sheets['Outliers'].write(0, 0, lower_limit_text)
+        self.excelWriter.sheets['Outliers'].write(1, 0, upper_limit_text)
+
         self.excelWriter.sheets['Outliers'].set_column(0, 0 , 15)
         self.excelWriter.sheets['Outliers'].set_column(1, 1 , 30)
         self.excelWriter.sheets['Outliers'].set_column(2, 2 , 30)
         self.excelWriter.sheets['Outliers'].set_column(3, 3 , 10)
-        self.excelWriter.sheets['Outliers'].set_column(4, 4 , 10)
-        self.excelWriter.sheets['Outliers'].set_column(5, 5 , 10)
+        self.excelWriter.sheets['Outliers'].set_column(4, 4 , 12)
+        self.excelWriter.sheets['Outliers'].set_column(5, 5 , 12)
         self.excelWriter.sheets['Outliers'].set_column(6, 6 , 20)
+        self.excelWriter.sheets['Outliers'].set_column(7, 7 , 30)
+

@@ -9,32 +9,31 @@ import ImportData
 import pandas as pd
 
 import xlsxwriter
+from datetime import datetime
 
 
 def main():
     # 1     fetch data
     # takes some time
     outputDir = './resources/'
+    csv_link = outputDir + 'data_soweto.csv'
 
-    # csv_link = ImportData.ImportData(outputDir).get_records()
+    # ImportData.ImportData(csv_link)
 
     # 2     populate the database
     # populateDatabase = DatabasePopulator.PopulateDatabase(dataset)
     # populateDatabase.add_records_to_database()
 
-
-    csv_link = outputDir + 'data_soweto.csv'
-
-    # # 3    specify the instrument
-    instruments = Instruments.Instruments(csv_link)
+    datestr = datetime.today().strftime('%Y%m%d')
 
     # # Generate outlier report
-    outliers_writer = pd.ExcelWriter(outputDir + 'outliers_soweto.xlsx', engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
+    instruments = Instruments.Instruments(csv_link)
+    outliers_writer = pd.ExcelWriter(outputDir + 'outliers_soweto_{}.xlsx'.format(datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
     DataAnalyser(outputDir, instruments, outliers_writer).outliers()
     outliers_writer.save()
 
     # Generate missing report
-    missing_writer = pd.ExcelWriter(outputDir + 'missing_soweto.xlsx', engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
+    missing_writer = pd.ExcelWriter(outputDir + 'missing_soweto_{}.xlsx'.format(datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
     BranchingLogicHandler(outputDir, csv_link, missing_writer).write_report()
     missing_writer.save()
 
