@@ -2,14 +2,14 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import missingno as msno
-import seaborn as sns
+
+import requests
+from io import StringIO
+
 
 import xlsxwriter
-import glob
-import math
 
-sns.set(style="ticks")
+# sns.set(style="ticks")
 
 class DataAnalyser:
 
@@ -159,16 +159,17 @@ class DataAnalyser:
             if data.dropna().size == 0:
                 continue
 
+            data = data.dropna()
+
+            # Remove -999 (missing data)
+            data = data[data != -999]
+
             q1 = data.quantile(0.25)
             q3 = data.quantile(0.75)
             mean = np.round(data.mean(),1)
             std = np.round(data.std(),1)
             median = np.round(data.median(),1)
             iqr = q3 - q1
-
-            # Skip iteration if IQR = 0
-            if iqr == 0:
-                continue
 
             upper_limit_iqr = q3 + 1.5 * iqr
             lower_limit_iqr = q1 - 1.5 * iqr
@@ -181,7 +182,7 @@ class DataAnalyser:
 
             # Find outliers i.e. values outside the range (q1 - 1.5 * iqr, q3 + 1.5 * iqr)
             mask = data.between(lower_limit, upper_limit, inclusive=True)
-            outliers = data[~mask].dropna()
+            outliers = data[~mask]
 
             # Skip iteration if there are no outliers
             if outliers.size == 0:
@@ -203,7 +204,30 @@ class DataAnalyser:
 
         return data_frame
 
+    def get_exceptions(self):
+        url = 'https://redcap.core.wits.ac.za/redcap/api/'
+
+        # specify the token and report id for report content
+        data = {
+            'token': os.environ.get('REDCAP_EXCEPTION_TOKEN'),
+            'content': 'report',
+            'format': 'csv',
+            'report_id': '23219',
+            'rawOrLabel': 'raw',
+            'rawOrLabelHeaders': 'raw',
+            'exportCheckboxLabel': 'false',
+            'returnFormat': 'json'
+        }
+
+        r = requests.post(url, data)
+        df = pd.read_csv(StringIO(r.text),index_col='study_id')
+        df = df[df['is_correct'].notna() | df['comment'].notna()]
+        df = df[['data_field']]
+        df.rename(columns={'data_field': 'Data Field'}, inplace=True)
+        return df
+
     def outliers(self):
+        exc = self.get_exceptions()
 
         df = pd.DataFrame()
 
@@ -214,6 +238,9 @@ class DataAnalyser:
             instrument_data.set_index(['study_id'], inplace=True)
             instrument_data = instrument_data.select_dtypes(include=np.number)
             df = self.instrument_outliers(instrument_data, df, instrument_key)
+
+        df = df[~df.isin(exc)]
+        df = df.dropna()
 
         df['Is Correct'] = ''
         df['Comment'] = ''

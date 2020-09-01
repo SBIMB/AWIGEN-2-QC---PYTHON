@@ -1,10 +1,12 @@
 import EmailHandler
 #import DatabasePopulator
-import Instruments
+from Instruments import Instruments
 from MergeHandler import MergeHandler
 from DataAnalyser import DataAnalyser
 from BranchingLogic import BranchingLogicHandler
-import ImportData
+import ExportData
+from ImportData import ImportData
+from SiteFeedbackHandler import SiteFeedbackHandler
 
 import pandas as pd
 
@@ -13,12 +15,15 @@ from datetime import datetime
 
 
 def main():
-    # 1     fetch data
-    # takes some time
     outputDir = './resources/'
     csv_link = outputDir + 'data_soweto.csv'
 
-    # ImportData.ImportData(csv_link)
+    # 1     fetch data
+    # takes some time
+    # ImportData(csv_link)
+
+    # Process site feedback
+    SiteFeedbackHandler.handle_outlier_feedback(outputDir + 'outliers_soweto_20200818.xlsx')
 
     # 2     populate the database
     # populateDatabase = DatabasePopulator.PopulateDatabase(dataset)
@@ -27,7 +32,7 @@ def main():
     datestr = datetime.today().strftime('%Y%m%d')
 
     # # Generate outlier report
-    instruments = Instruments.Instruments(csv_link)
+    instruments = Instruments(csv_link)
     outliers_writer = pd.ExcelWriter(outputDir + 'outliers_soweto_{}.xlsx'.format(datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
     DataAnalyser(outputDir, instruments, outliers_writer).outliers()
     outliers_writer.save()
@@ -36,8 +41,6 @@ def main():
     missing_writer = pd.ExcelWriter(outputDir + 'missing_soweto_{}.xlsx'.format(datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
     BranchingLogicHandler(outputDir, csv_link, missing_writer).write_report()
     missing_writer.save()
-
-    # branchingLogicHandler.get_report_summary()
 
     # 7    list of email addresses. Appended more contacts
     # contacts = ['jajawandera@gmail.com', 'u17253129@tuks.co.za']
@@ -50,7 +53,6 @@ def main():
     #     attachments.append(plot)
 
     # # 10  write general report.csv file
-    # branchingLogicHandler.get_report_summary()
     # attachments.append(report_link)
 
     # 11     sending the email
