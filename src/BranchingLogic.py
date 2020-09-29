@@ -479,6 +479,9 @@ class BranchingLogicHandler:
                 mask = ( self.data[col].isna() &
                          ( self.data['genh_oes_cancer_treat_now'] == 1 ) )
 
+            elif col == 'genh_other_cancer_treat':
+                mask = ( self.data[col].isna() &
+                         ( self.data['genh_other_cancers'] == 1 ) )
             elif col in ['genh_cancer_specify_other', 'genh_oth_cancer_trad_med']:
                 mask = ( self.data[col].isna() &
                          ( self.data['genh_other_cancers'] == 1 ) )
@@ -640,6 +643,9 @@ class BranchingLogicHandler:
             elif col == 'infh_hiv_counselling':
                 mask = ( self.data[col].isna() &
                          ( self.data['infh_hiv_test'] == 1 ) )
+            elif col == 'infh_hiv_test':
+                mask = ( self.data[col].isna() &
+                         ( self.data['infh_hiv_positive'] == 0 ) )
             else:
                 mask = self.data[col].isna()
 
@@ -831,21 +837,39 @@ class BranchingLogicHandler:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_joints_swollen_pain'] == 1 ) )
 
-            elif col in ['carf_acpa', 'carf_esr_crp', 'carf_osteo'] :
+            elif col in ['carf_acpa', 'carf_esr_crp'] :
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_arthritis_results'] == 1 ) )
 
-            elif col in ['carf_osteo_sites', 'carf_osteo_hip']:
+            elif col in ['carf_osteo_sites', 'carf_osteo_sites___1', 'carf_osteo_sites___2',
+                         'carf_osteo_sites___3', 'carf_osteo_sites___4', 'carf_osteo_sites___5',
+                         'carf_osteo_sites___6']:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_osteo'] == 1 ) )
+
+            elif col == 'carf_osteo_hip':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_osteo'] == 1 ) &
+                         ( ( self.data['carf_osteo_sites___1'] == 1 ) |
+                           ( self.data['carf_osteo_sites___2'] == 1 ) ) )
 
             elif col in [ 'carf_osteo_hip_site','carf_osteo_hip_repl_age']:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_osteo_hip'] == 1 ) )
 
-            elif col in [ 'carf_osteo_knee_replace_site', 'carf_osteo_knee_replace']:
+            elif col == 'carf_osteo_knee_replace':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_osteo'] == 1 ) &
+                         ( ( self.data['carf_osteo_sites___3'] == 1 ) |
+                           ( self.data['carf_osteo_sites___4'] == 1 ) ) )
+
+            elif col in [ 'carf_osteo_knee_replace_site', 'carf_osteo_knee_repl_age']:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_osteo_knee_replace'] == 1 ) )
+
+            elif col == 'carf_rheumatoid_factor':
+                mask = ( self.data[col].isna() &
+                          ( self.data['carf_arthritis_results'] == 1 ) )
             else:
                 mask = self.data[col].isna()
 
@@ -1221,8 +1245,7 @@ class BranchingLogicHandler:
                 mask = ( self.data[col].isna() &
                          ( self.data['poc_test_conducted'] == 0 ) )
             elif col in ['poc_instrument_serial_num', 'poc_test_strip_batch_num', 'poc_glucose_test_result', 'poc_chol_results_provided',
-                         'poc_teststrip_expiry_date', 'poc_test_date', 'poc_test_time', 'poc_chol_result', 'poc_hiv_strip_batch_num',
-                         'poc_hiv_strip_expiry_date']:
+                         'poc_teststrip_expiry_date', 'poc_test_date', 'poc_test_time', 'poc_chol_result']:
                 mask = ( self.data[col].isna() &
                          ( self.data['poc_test_conducted'] == 1 ) )
             elif col == 'poc_gluc_results_notes':
@@ -1236,7 +1259,8 @@ class BranchingLogicHandler:
                          ( self.data['poc_hiv_test_conducted'] == 0 ) )
             elif col in ['poc_hiv_pre_test', 'poc_test_kit_serial_num',
                          'poc_hiv_test_date_done', 'poc_technician_name', 'poc_hiv_test_result',
-                         'poc_result_provided', 'poc_post_test_counselling']:
+                         'poc_result_provided', 'poc_post_test_counselling', 'poc_hiv_strip_batch_num',
+                         'poc_hiv_strip_expiry_date']:
                 mask = ( self.data[col].isna() &
                          ( self.data['poc_hiv_test_conducted'] == 1 ) )
             elif col == 'poc_pre_test_worker':
@@ -1245,7 +1269,7 @@ class BranchingLogicHandler:
             elif col == 'poc_post_test_worker':
                 mask = ( self.data[col].isna() &
                          ( self.data['poc_post_test_counselling'] == 1 ) )
-            elif col == 'poc_hivpositive_firsttime':
+            elif col in ['poc_hivpositive_firsttime', 'poc_hiv_seek_advice']:
                 mask = ( self.data[col].isna() &
                          ( self.data['poc_hiv_test_result'] == 1 ) )
             else:
@@ -1309,10 +1333,18 @@ class BranchingLogicHandler:
         # df['Comment'] = ""
 
         df = df.sort_values(by=['study_id', 'Instrument'])
+        missing_summary = df['Data Field'].value_counts().reset_index()
+
         df.to_excel(self.excelWriter, sheet_name='Missing Data', startcol=0, startrow=0, index=False)
         self.excelWriter.sheets['Missing Data'].set_column(0, 0 , 20)
         self.excelWriter.sheets['Missing Data'].set_column(1, 1 , 30)
         self.excelWriter.sheets['Missing Data'].set_column(2, 2 , 30)
+
+        missing_summary.rename(columns={'index':'Data Field', 'Data Field' : 'Total Missing'}, inplace=True)
+
+        missing_summary.to_excel(self.excelWriter, sheet_name='Missing Data Summary', startcol=0, startrow=0, index=False)
+        self.excelWriter.sheets['Missing Data Summary'].set_column(0, 0 , 30)
+        self.excelWriter.sheets['Missing Data Summary'].set_column(1, 1 , 20)
         # self.excelWriter.sheets['Missing Data'].set_column(3, 3 , 30)
 
     instrument_dict = {
