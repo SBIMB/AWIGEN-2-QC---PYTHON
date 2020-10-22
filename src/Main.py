@@ -15,30 +15,31 @@ from datetime import datetime
 
 
 def main():
+    datestr = datetime.today().strftime('%Y%m%d')
+    siteStr = 'nairobi'
     outputDir = './resources/'
-    csv_link = outputDir + 'data_soweto.csv'
+
+    csv_link = outputDir + 'data_{}_{}.csv'.format(siteStr, datestr)
 
     # 1     fetch data
     # takes some time
-    # ImportData(csv_link)
+    ImportData(csv_link)
 
     # Process site feedback
-    SiteFeedbackHandler.handle_outlier_feedback(outputDir + 'outliers_soweto_20200818.xlsx')
+    # SiteFeedbackHandler.handle_outlier_feedback(outputDir + 'outliers_soweto_20200818_returned.xlsx')
 
     # 2     populate the database
     # populateDatabase = DatabasePopulator.PopulateDatabase(dataset)
     # populateDatabase.add_records_to_database()
 
-    datestr = datetime.today().strftime('%Y%m%d')
-
-    # # Generate outlier report
+    # Generate outlier report
     instruments = Instruments(csv_link)
-    outliers_writer = pd.ExcelWriter(outputDir + 'outliers_soweto_{}.xlsx'.format(datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
+    outliers_writer = pd.ExcelWriter(outputDir + 'outliers_{}_{}.xlsx'.format(siteStr, datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
     DataAnalyser(outputDir, instruments, outliers_writer).outliers()
     outliers_writer.save()
 
     # Generate missing report
-    missing_writer = pd.ExcelWriter(outputDir + 'missing_soweto_{}.xlsx'.format(datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
+    missing_writer = pd.ExcelWriter(outputDir + 'missing_{}_{}.xlsx'.format(siteStr, datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
     BranchingLogicHandler(outputDir, csv_link, missing_writer).write_report()
     missing_writer.save()
 

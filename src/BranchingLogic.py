@@ -51,12 +51,12 @@ class BranchingLogicHandler:
         for col in sorted(colNames.to_list()):
             if (col in self.ignored_cols) or ('phase_1' in col):
                 continue
-            elif col == 'gene_uni_site_id_is_correct':
-                mask = ( self.data[col].isna() &
-                        ~( self.data['phase_1_unique_site_id'].isna() ) )
-            elif col == 'gene_uni_site_id_correct':
-                mask = ( self.data[col].isna() &
-                       ( self.data['gene_uni_site_id_is_correct'] == 0 ) )
+            # elif col == 'gene_uni_site_id_is_correct':
+            #     mask = ( self.data[col].isna() &
+            #             ~( self.data['phase_1_unique_site_id'].isna() ) )
+            # elif col == 'gene_uni_site_id_correct':
+            #     mask = ( self.data[col].isna() &
+            #            ( self.data['gene_uni_site_id_is_correct'] == 0 ) ) #Missing for DIMAMO
 
             elif col == 'demo_dob_new':
                 mask = ( self.data[col].isna() &
@@ -394,7 +394,7 @@ class BranchingLogicHandler:
                 mask = ( self.data[col].isna() &
                          self.data['subs_tobacco_chew_freq'].isin( [1, 2, 3, 4, 5] ) )
 
-            elif col in [ 'subs_alcohol_consume_now', 'subs_alcohol_con_past_yr' ]:
+            elif col in [ 'subs_alcohol_consume_now', 'subs_alcohol_con_past_yr', 'subs_alcohol_cutdown' ]:
                 mask = ( self.data[col].isna() &
                          ( self.data['subs_alcohol_consump'] == 1 ) )
             elif col in ['subs_alcohol_consump_freq', 'subs_alcohol_criticize', 'subs_alcohol_guilty', 'subs_alcohol_hangover']:
@@ -579,9 +579,13 @@ class BranchingLogicHandler:
             elif col == 'genh_pesticide_list':
                 mask = ( self.data[col].isna() &
                          ( self.data['genh_pesticide_type'] == 1 ) )
+
             elif col == 'genh_cookingplace_specify':
                 mask = ( self.data[col].isna() &
                          ( self.data['genh_cooking_place'] == 3 ) )
+            elif col == 'genh_cooking_done_inside':
+                mask = ( self.data[col].isna() &
+                         ( self.data['genh_cooking_place'] == 1 ) )
             elif col == 'genh_energy_specify':
                 mask = ( self.data[col].isna() &
                          ( self.data['genh_energy_source_type___6'] == 6 ) )
@@ -628,12 +632,9 @@ class BranchingLogicHandler:
                 mask = ( self.data[col].isna() &
                          ( self.data['infh_hiv_positive'] == 1 ) )
 
-            elif col in ['infh_hiv_treatment', 'infh_hiv_arv_meds']:
+            elif col in ['infh_hiv_treatment', 'infh_hiv_arv_meds', 'infh_hiv_arv_meds_now']:
                 mask = ( self.data[col].isna() &
                          ( self.data['infh_hiv_medication'] == 1 ) )
-            elif col == 'infh_hiv_arv_meds_now':
-                mask = ( self.data[col].isna() &
-                         ( self.data['infh_hiv_status'] == 1 ) )
             elif col in ['infh_hiv_arv_meds_specify', 'infh_hiv_arv_single_pill']:
                 mask = ( self.data[col].isna() &
                          ( self.data['infh_hiv_arv_meds_now'] == 1 ) )
@@ -657,6 +658,7 @@ class BranchingLogicHandler:
 
     def check_a_cardiometabolic_risk_factors_diabetes(self):
         colNames = self.data.columns[self.data.columns.str.contains('carf_diab') |
+                                     self.data.columns.str.contains('carf_daughter_diabetes_1') |
                                      self.data.columns.str.contains('carf_blood_sugar') |
                                      self.data.columns.str.contains('a_cardiometabolic_risk_factors_diabetes_complete') ]
 
@@ -681,13 +683,78 @@ class BranchingLogicHandler:
             elif col == 'carf_diabetes_traditional':
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_diabetes_12months'] == 1 ) )
-            elif col in ['carf_diabetes_mother', 'carf_diabetes_father', 'carf_diabetes_brother_1','carf_diabetes_brother_2',
-                        'carf_diabetes_brother_3',	'carf_diabetes_brother_4', 'carf_diabetes_sister_1', 'carf_diabetes_sister_2',
-                        'carf_diabetes_sister_3', 'carf_diabetes_sister_4', 'carf_diabetes_son_1', 'carf_diabetes_son_2',
-                        'carf_diabetes_son_3',	'carf_diabetes_son_4', 'carf_daughter_diabetes_1', 'carf_diabetes_daughter_2',
-                        'carf_diabetes_daughter_3', 'carf_diabetes_daughter_4', 'carf_diabetes_fam_other']:
+            elif col in ['carf_diabetes_mother', 'carf_diabetes_father', 'carf_diabetes_fam_other']:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_diabetes_history'] == 1 ) )
+
+            elif col == 'carf_diabetes_brother_1':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_number_of_brothers'] >= 1 ) )
+            elif col == 'carf_diabetes_brother_2':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_number_of_brothers'] >= 2 ) )
+            elif col == 'carf_diabetes_brother_3':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_number_of_brothers'] >= 3 ) )
+            elif col == 'carf_diabetes_brother_4':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_number_of_brothers'] >= 4 ) )
+
+            elif col == 'carf_diabetes_sister_1':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_number_of_sisters'] >= 1 ) )
+            elif col == 'carf_diabetes_sister_2':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_number_of_sisters'] >= 2 ) )
+            elif col == 'carf_diabetes_sister_3':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_number_of_sisters'] >= 3 ) )
+            elif col == 'carf_diabetes_sister_4':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_number_of_sisters'] >= 4 ) )
+
+            elif col == 'carf_diabetes_son_1':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_bio_sons'] >= 1 ) )
+            elif col == 'carf_diabetes_son_2':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_bio_sons'] >= 2 ) )
+            elif col == 'carf_diabetes_son_3':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_bio_sons'] >= 3 ) )
+            elif col == 'carf_diabetes_son_4':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_bio_sons'] >= 4 ) )
+
+            elif col == 'carf_daughter_diabetes_1':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_bio_sons'] >= 1 ) )
+            elif col == 'carf_diabetes_daughter_2':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_bio_sons'] >= 2 ) )
+            elif col == 'carf_diabetes_daughter_3':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_bio_sons'] >= 3 ) )
+            elif col == 'carf_diabetes_daughter_4':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_diabetes_history'] == 1 ) &
+                         ( self.data['famc_bio_sons'] >= 4 ) )
+
             elif col == 'carf_diabetes_fam_specify':
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_diabetes_fam_other'] == 1 ) )
@@ -725,9 +792,12 @@ class BranchingLogicHandler:
             elif col == 'carf_stroke_diagnosed':
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_stroke'] == 1 ) )
-            elif col in ['carf_angina_treatment', 'carf_angina_treat_now', 'carf_angina_meds', 'carf_angina_traditional', 'carf_pain']:
+            elif col in ['carf_angina_treatment', 'carf_angina_treat_now', 'carf_angina_traditional', 'carf_pain']:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_angina'] == 1 ) )
+            elif col == 'carf_angina_meds':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_angina_treat_now'] == 1 ) )
             elif col in ['carf_pain_action_stopslow', 'carf_relief_standstill']:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_pain2'] == 1 ) )
@@ -737,6 +807,7 @@ class BranchingLogicHandler:
             elif col == 'carf_heartattack_meds':
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_heartattack_treat'] == 1 ) )
+
             elif col in ['carf_chf_treatment', 'carf_chf_treatment_now', 'carf_chf_meds']:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_congestiv_heart_fail'] == 1 ) )
@@ -762,12 +833,18 @@ class BranchingLogicHandler:
                 continue
 
             elif col in ['carf_hypertension_12mnths', 'carf_hypertension_treat',
-                         'carf_hypertension_meds', 'carf_hypertension_medlist']:
+                         'carf_hypertension_meds']:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_hypertension'] == 1 ) )
-            elif col in ['carf_chol_treatment', 'carf_chol_medicine']:
+            elif col == 'carf_hypertension_medlist':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_hypertension_meds'] == 1 ) )
+            elif col in ['carf_chol_treatment']:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_h_cholesterol'] == 1 ) )
+            elif col == 'carf_chol_medicine':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_chol_treatment_now___3'] == 1 ) )
             elif col == 'carf_chol_treat_specify':
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_chol_treatment_now___4'] == 1 ) )
@@ -847,23 +924,21 @@ class BranchingLogicHandler:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_osteo'] == 1 ) )
 
-            elif col == 'carf_osteo_hip':
+            elif col == 'carf_osteo_hip_replace':
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_osteo'] == 1 ) &
                          ( ( self.data['carf_osteo_sites___1'] == 1 ) |
                            ( self.data['carf_osteo_sites___2'] == 1 ) ) )
-
-            elif col in [ 'carf_osteo_hip_site','carf_osteo_hip_repl_age']:
+            elif col in [ 'carf_osteo_hip_repl_site','carf_osteo_hip_repl_age']:
                 mask = ( self.data[col].isna() &
-                         ( self.data['carf_osteo_hip'] == 1 ) )
+                         ( self.data['carf_osteo_hip_replace'] == 1 ) )
 
             elif col == 'carf_osteo_knee_replace':
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_osteo'] == 1 ) &
                          ( ( self.data['carf_osteo_sites___3'] == 1 ) |
                            ( self.data['carf_osteo_sites___4'] == 1 ) ) )
-
-            elif col in [ 'carf_osteo_knee_replace_site', 'carf_osteo_knee_repl_age']:
+            elif col in [ 'carf_osteo_knee_repl_site', 'carf_osteo_knee_repl_age']:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_osteo_knee_replace'] == 1 ) )
 
@@ -996,10 +1071,10 @@ class BranchingLogicHandler:
                          ( self.data['ultr_plaque_measured'] == 1 ) )
             elif col == 'ultr_plaque_right':
                 mask = ( self.data[col].isna() &
-                         ( self.data['ultr_plaque_right_present'] == 0 ) )
+                         ( self.data['ultr_plaque_right_present'] == 1 ) )
             elif col == 'ultr_plaque_left':
                 mask = ( self.data[col].isna() &
-                         ( self.data['ultr_plaque_left_present'] == 0 ) )
+                         ( self.data['ultr_plaque_left_present'] == 1 ) )
 
             elif col == 'ultr_dxa_scan_comment':
                 mask = ( self.data[col].isna() &
@@ -1173,7 +1248,7 @@ class BranchingLogicHandler:
         colNames = self.data.columns[self.data.columns.str.contains('bloc_last') |
                                      self.data.columns.str.contains('bloc_hours_last_drink') |
                                      self.data.columns.str.contains('bloc_fasting_confirmed') |
-                                     ( self.data.columns.str.contains('bloc_') & self.data.columns.str.contains('tube') ) |
+                                     ( self.data.columns.str.contains('bloc_') & self.data.columns.str.contains('tube') & ~self.data.columns.str.contains('ur') ) |
                                      self.data.columns.str.contains('bloc_phlebotomist_name') |
                                      self.data.columns.str.contains('bloc_blood') |
                                      self.data.columns.str.contains('b_blood_collection_complete') ]
@@ -1325,12 +1400,26 @@ class BranchingLogicHandler:
     def write_report(self):
         df = pd.DataFrame()
 
+        # df2 = pd.DataFrame()
+
         for instrument_name, instrument_checker in self.instrument_dict.items():
             missing_df = instrument_checker(self)
             missing_df['Instrument'] = instrument_name
             df = df.append(missing_df)
 
         # df['Comment'] = ""
+
+        # df2 = df2.append(df[df['Data Field'] == 'genh_cervical_cancer_mom'])
+        # df2 = df2.append(df[df['Data Field'] == 'genh_breast_cancer_mom'])
+        # df2 = df2.append(df[df['Data Field'] == 'genh_prostate_cancer_dad'])
+        # df2 = df2.append(df[df['Data Field'] == 'genh_other_cancers_dad'])
+        # df2 = df2.append(df[df['Data Field'] == 'genh_oes_cancer_mom'])
+        # df2 = df2.sort_values(by=['study_id'])
+        # df2 = df2[['study_id', 'Data Field']]
+        # df2.to_excel(self.excelWriter, sheet_name='Missing Data', startcol=0, startrow=0, index=False)
+        # self.excelWriter.sheets['Missing Data'].set_column(0, 0 , 20)
+        # self.excelWriter.sheets['Missing Data'].set_column(1, 1 , 30)
+        # self.excelWriter.save()
 
         df = df.sort_values(by=['study_id', 'Instrument'])
         missing_summary = df['Data Field'].value_counts().reset_index()
@@ -1345,7 +1434,6 @@ class BranchingLogicHandler:
         missing_summary.to_excel(self.excelWriter, sheet_name='Missing Data Summary', startcol=0, startrow=0, index=False)
         self.excelWriter.sheets['Missing Data Summary'].set_column(0, 0 , 30)
         self.excelWriter.sheets['Missing Data Summary'].set_column(1, 1 , 20)
-        # self.excelWriter.sheets['Missing Data'].set_column(3, 3 , 30)
 
     instrument_dict = {
         # 'a_phase_1_data'                    : check_a_phase_1_data,
@@ -1384,10 +1472,13 @@ class BranchingLogicHandler:
         'completion_of_questionnaire'       : check_completion_of_questionnaire
         }
 
-    ignored_cols = ['ethnolinguistc_available',
+    ignored_cols = ['gene_uni_site_id_correct',
+                    'gene_uni_site_id_is_correct',
+                    'ethnolinguistc_available',
                     'a_phase_1_data_complete',
                     'gene_site_id',
                     'demo_dob',
+                    'demo_date_of_birth',
                     'demo_approx_dob_is_correct',
                     'demo_dob_is_correct',
                     'demo_date_of_birth_known',
