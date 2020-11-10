@@ -1429,11 +1429,13 @@ class BranchingLogicHandler:
         self.excelWriter.sheets['Missing Data'].set_column(1, 1 , 30)
         self.excelWriter.sheets['Missing Data'].set_column(2, 2 , 30)
 
+        missing_summary['Comments'] = ''
         missing_summary.rename(columns={'index':'Data Field', 'Data Field' : 'Total Missing'}, inplace=True)
 
         missing_summary.to_excel(self.excelWriter, sheet_name='Missing Data Summary', startcol=0, startrow=0, index=False)
         self.excelWriter.sheets['Missing Data Summary'].set_column(0, 0 , 30)
         self.excelWriter.sheets['Missing Data Summary'].set_column(1, 1 , 20)
+        self.excelWriter.sheets['Missing Data Summary'].set_column(2, 2 , 30)
 
     instrument_dict = {
         # 'a_phase_1_data'                    : check_a_phase_1_data,

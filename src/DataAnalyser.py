@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 import requests
 from io import StringIO
 
-
 import xlsxwriter
+import ApiKeys
 
 # sns.set(style="ticks")
 
@@ -171,6 +171,10 @@ class DataAnalyser:
             median = np.round(data.median(),1)
             iqr = q3 - q1
 
+            # Skip iteration if IQR = 0
+            if iqr == 0:
+                continue
+
             upper_limit_iqr = q3 + 1.5 * iqr
             lower_limit_iqr = q1 - 1.5 * iqr
 
@@ -182,7 +186,7 @@ class DataAnalyser:
 
             # Find outliers i.e. values outside the range (q1 - 1.5 * iqr, q3 + 1.5 * iqr)
             mask = data.between(lower_limit, upper_limit, inclusive=True)
-            outliers = data[~mask]
+            outliers = data[~mask].dropna()
 
             # Skip iteration if there are no outliers
             if outliers.size == 0:
@@ -204,15 +208,22 @@ class DataAnalyser:
 
         return data_frame
 
-    def get_exceptions(self):
+    def get_exceptions(self, csv):
+        report_ids = {'soweto' : 23621}  #TODO Update with other sites
+
+        site = [key for key, value in report_ids.items() if key in csv.lower()][0]
+        report_id = report_ids[site]
+
+        api_key = ApiKeys.GetApiKey('exceptions')
+
         url = 'https://redcap.core.wits.ac.za/redcap/api/'
 
         # specify the token and report id for report content
         data = {
-            'token': os.environ.get('REDCAP_EXCEPTION_TOKEN'),
+            'token': api_key,
             'content': 'report',
             'format': 'csv',
-            'report_id': '23219',
+            'report_id': report_id,
             'rawOrLabel': 'raw',
             'rawOrLabelHeaders': 'raw',
             'exportCheckboxLabel': 'false',
@@ -221,13 +232,13 @@ class DataAnalyser:
 
         r = requests.post(url, data)
         df = pd.read_csv(StringIO(r.text),index_col='study_id')
-        df = df[df['is_correct'].notna() | df['comment'].notna()]
+        df = df[df['is_correct'].notna() | df['comment'].notna() | df['new_value'].notna()]
         df = df[['data_field']]
         df.rename(columns={'data_field': 'Data Field'}, inplace=True)
         return df
 
     def outliers(self):
-        exc = self.get_exceptions()
+        # exceptions = self.get_exceptions(self.excelWriter.path)
 
         df = pd.DataFrame()
 
@@ -239,12 +250,14 @@ class DataAnalyser:
             instrument_data = instrument_data.select_dtypes(include=np.number)
             df = self.instrument_outliers(instrument_data, df, instrument_key)
 
-        df = df[~df.isin(exc)]
-        df = df.dropna()
+        # Remove exceptions from outliers frame
+        if 'exceptions' in locals():
+            df = pd.merge(df, exceptions, on=['study_id','Data Field'], how='outer', indicator='source')
+            df = df[df['source'] == 'left_only'].drop('source', axis=1)
 
         df['Is Correct'] = ''
-        df['Comment'] = ''
-        df = df[['Data Field', 'Instrument', 'Value', 'Lower Limit', 'Upper Limit', 'Is Correct', 'Comment']]
+        df['Comment/Updated Value'] = ''
+        df = df[['Data Field', 'Instrument', 'Value', 'Lower Limit', 'Upper Limit', 'Is Correct', 'Comment/Updated Value']]
         df = df.sort_values(by=['study_id', 'Instrument'])
         df.reset_index(inplace=True)
         df.to_excel(self.excelWriter, sheet_name='Outliers', startcol=0, startrow=3, index=False)

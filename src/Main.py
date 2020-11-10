@@ -16,7 +16,7 @@ from datetime import datetime
 
 def main():
     datestr = datetime.today().strftime('%Y%m%d')
-    siteStr = 'nairobi'
+    siteStr = 'agincourt'
     outputDir = './resources/'
 
     csv_link = outputDir + 'data_{}_{}.csv'.format(siteStr, datestr)
