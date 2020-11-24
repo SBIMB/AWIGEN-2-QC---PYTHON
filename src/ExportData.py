@@ -6,7 +6,7 @@ import ApiKeys
 
 class ExportData:
     def set_records(self, csv_data, site):
-        report_ids = {'soweto' : 23621} #TODO Update with other sites
+        report_ids = {'soweto' : 23621, 'agincourt' : 25317, 'dimamo' : 25318} #TODO Update with other sites
 
         api_key = ApiKeys.GetApiKey('exceptions')
         url = 'https://redcap.core.wits.ac.za/redcap/api/'

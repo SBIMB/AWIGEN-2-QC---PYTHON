@@ -209,10 +209,12 @@ class DataAnalyser:
         return data_frame
 
     def get_exceptions(self, csv):
-        report_ids = {'soweto' : 23621}  #TODO Update with other sites
+        report_ids = {'soweto' : 23621, 'agincourt' : 25317, 'dimamo' : 25318}  #TODO Update with other sites
+        site_ids = {'agincourt' : 1, 'dimamo' : 2, 'nairobi' : 3, 'nanoro' : 4, 'navrongo' : 5, 'soweto' : 6}
 
         site = [key for key, value in report_ids.items() if key in csv.lower()][0]
         report_id = report_ids[site]
+        site_id = site_ids[site]
 
         api_key = ApiKeys.GetApiKey('exceptions')
 
@@ -231,14 +233,19 @@ class DataAnalyser:
         }
 
         r = requests.post(url, data)
-        df = pd.read_csv(StringIO(r.text),index_col='study_id')
-        df = df[df['is_correct'].notna() | df['comment'].notna() | df['new_value'].notna()]
-        df = df[['data_field']]
-        df.rename(columns={'data_field': 'Data Field'}, inplace=True)
+        if r.text == '\n':
+            df = pd.DataFrame(columns = ['study_id','Data Field'])
+            df.set_index('study_id', inplace=True)
+        else:
+            df = pd.read_csv(StringIO(r.text),index_col='study_id')
+            df = df[df['is_correct'].notna() | df['comment'].notna() | df['new_value'].notna()]
+            df = df[df['site'] == site_id]
+            df = df[['data_field']]
+            df.rename(columns={'data_field': 'Data Field'}, inplace=True)
         return df
 
     def outliers(self):
-        # exceptions = self.get_exceptions(self.excelWriter.path)
+        exceptions = self.get_exceptions(self.excelWriter.path)
 
         df = pd.DataFrame()
 
@@ -251,9 +258,8 @@ class DataAnalyser:
             df = self.instrument_outliers(instrument_data, df, instrument_key)
 
         # Remove exceptions from outliers frame
-        if 'exceptions' in locals():
-            df = pd.merge(df, exceptions, on=['study_id','Data Field'], how='outer', indicator='source')
-            df = df[df['source'] == 'left_only'].drop('source', axis=1)
+        df = pd.merge(df, exceptions, on=['study_id','Data Field'], how='outer', indicator='source')
+        df = df[df['source'] == 'left_only'].drop('source', axis=1)
 
         df['Is Correct'] = ''
         df['Comment/Updated Value'] = ''

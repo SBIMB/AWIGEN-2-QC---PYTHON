@@ -1,7 +1,9 @@
 # resources folder
 resources/*.jpeg
-resources/*hist.png
 resources/*.txt
+resources/*.csv
+resources/*.xlsx
+resources/*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
