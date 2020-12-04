@@ -64,11 +64,19 @@ class BranchingLogicHandler:
 
             elif col == 'demo_gender_correction':
                 mask = ( self.data[col].isna() &
-                       ( self.data['demo_gender_is_correct'] == 0 ) )
+                       ( ( self.data['demo_gender_is_correct'] == 0 ) |
+                         ( self.data['demo_gender_is_correct'].isna() ) ) )
+            elif col == 'demo_gender_is_correct':
+                mask = ( self.data[col].isna() &
+                       ( self.data['demo_gender_correction'].isna() ) )
 
+            elif col == 'home_language_confirmation':
+                mask = ( self.data[col].isna() &
+                       ( self.data['home_language'].isna() ) )
             elif col == 'home_language':
                 mask = ( self.data[col].isna() &
-                       ( self.data['home_language_confirmation'] == 0 ) )
+                       ( ( self.data['home_language_confirmation'] == 0 ) |
+                         ( self.data['home_language_confirmation'].isna() ) ) )
             elif col == 'other_home_language':
                 mask = ( self.data[col].isna() &
                        ( self.data['home_language'] == 98 ) )
@@ -741,19 +749,19 @@ class BranchingLogicHandler:
             elif col == 'carf_daughter_diabetes_1':
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_diabetes_history'] == 1 ) &
-                         ( self.data['famc_bio_sons'] >= 1 ) )
+                         ( self.data['famc_bio_daughters'] >= 1 ) )
             elif col == 'carf_diabetes_daughter_2':
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_diabetes_history'] == 1 ) &
-                         ( self.data['famc_bio_sons'] >= 2 ) )
+                         ( self.data['famc_bio_daughters'] >= 2 ) )
             elif col == 'carf_diabetes_daughter_3':
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_diabetes_history'] == 1 ) &
-                         ( self.data['famc_bio_sons'] >= 3 ) )
+                         ( self.data['famc_bio_daughters'] >= 3 ) )
             elif col == 'carf_diabetes_daughter_4':
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_diabetes_history'] == 1 ) &
-                         ( self.data['famc_bio_sons'] >= 4 ) )
+                         ( self.data['famc_bio_daughters'] >= 4 ) )
 
             elif col == 'carf_diabetes_fam_specify':
                 mask = ( self.data[col].isna() &
@@ -978,8 +986,7 @@ class BranchingLogicHandler:
                          ( self.data['gpaq_transport_phy'] == 1 ) )
             elif col == 'gpaq_leisurevigorous_days':
                 mask = ( self.data[col].isna() &
-                         ( ( self.data['gpaq_leisure_phy'] == 1 ) |
-                           ( self.data['gpaq_leisure_vigorous'] == 1 ) ) )
+                         ( self.data['gpaq_leisure_vigorous'] == 1 ) )
             elif col in ['gpaq_leisurevigorous_time', 'gpaq_leisurevigorous_hrs', 'gpaq_leisurevigorous_mins']:
                 mask = ( self.data[col].isna() &
                          ( self.data['gpaq_leisurevigorous_days'].notna() ) )

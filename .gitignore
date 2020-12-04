@@ -111,4 +111,4 @@ venv.bak/
 .mypy_cache/
 
 # VS Code
-.vscode/launch.json
+.vscode/
