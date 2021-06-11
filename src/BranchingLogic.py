@@ -10,6 +10,7 @@ class BranchingLogicHandler:
     def __init__(self, outputDir, csv_link, excel_writer):
         self.outputDir = outputDir
 
+        self.csv_link = csv_link
         # initiate data frame
         self.data = pd.read_csv(csv_link, index_col=0)
 
@@ -77,6 +78,9 @@ class BranchingLogicHandler:
                 mask = ( self.data[col].isna() &
                        ( ( self.data['home_language_confirmation'] == 0 ) |
                          ( self.data['home_language_confirmation'].isna() ) ) )
+            elif col == 'demo_home_language':
+                mask = ( self.data[col].isna() &
+                       ( self.data['home_language'].isna() ) )
             elif col == 'other_home_language':
                 mask = ( self.data[col].isna() &
                        ( self.data['home_language'] == 98 ) )
@@ -402,10 +406,13 @@ class BranchingLogicHandler:
                 mask = ( self.data[col].isna() &
                          self.data['subs_tobacco_chew_freq'].isin( [1, 2, 3, 4, 5] ) )
 
-            elif col in [ 'subs_alcohol_consume_now', 'subs_alcohol_con_past_yr', 'subs_alcohol_cutdown' ]:
+            # elif col in [ 'subs_alcohol_consume_now', 'subs_alcohol_con_past_yr', 'subs_alcohol_cutdown' ]:
+            elif col in [ 'subs_alcohol_consume_now', 'subs_alcohol_con_past_yr']:
                 mask = ( self.data[col].isna() &
                          ( self.data['subs_alcohol_consump'] == 1 ) )
-            elif col in ['subs_alcohol_consump_freq', 'subs_alcohol_criticize', 'subs_alcohol_guilty', 'subs_alcohol_hangover']:
+            # elif col in ['subs_alcohol_consump_freq', 'subs_alcohol_criticize', 'subs_alcohol_guilty', 'subs_alcohol_hangover']:
+            elif col in ['subs_alcohol_consump_freq', 'subs_alcohol_criticize',
+                         'subs_alcohol_guilty', 'subs_alcohol_hangover', 'subs_alcohol_cutdown']:
                 mask = ( self.data[col].isna() &
                        ( self.data['subs_alcohol_consume_now'] == 1 ) )
             elif col == 'subs_alcoholtype_consumed':
@@ -527,18 +534,26 @@ class BranchingLogicHandler:
             if col in self.ignored_cols:
                 continue
             elif col in ['genh_starchy_staple_freq', 'genh_staple_servings']:
-                mask = ( self.data[col].isna() & ( ( self.data['genh_starchy_staple_food___1'] == 1 ) |
-                                                   ( self.data['genh_starchy_staple_food___2'] == 1 ) |
-                                                   ( self.data['genh_starchy_staple_food___3'] == 1 ) |
-                                                   ( self.data['genh_starchy_staple_food___4'] == 1 ) |
-                                                   ( self.data['genh_starchy_staple_food___5'] == 1 ) |
-                                                   ( self.data['genh_starchy_staple_food___6'] == 1 ) |
-                                                   ( self.data['genh_starchy_staple_food___7'] == 1 ) |
-                                                   ( self.data['genh_starchy_staple_food___8'] == 1 ) |
-                                                   ( self.data['genh_starchy_staple_food___9'] == 1 ) |
-                                                   ( self.data['genh_starchy_staple_food___10'] == 1 ) |
-                                                   ( self.data['genh_starchy_staple_food___11'] == 1 ) |
-                                                   ( self.data['genh_starchy_staple_food___12'] == 1 ) ) )
+                if 'nanoro' in self.csv_link.lower():
+                    mask = ( self.data[col].isna() & ( ( self.data['genh_starchy_staple_food___2'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___3'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___13'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___14'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___15'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___16'] == 1 ) ) )
+                else:
+                    mask = ( self.data[col].isna() & ( ( self.data['genh_starchy_staple_food___1'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___2'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___3'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___4'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___5'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___6'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___7'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___8'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___9'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___10'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___11'] == 1 ) |
+                                                    ( self.data['genh_starchy_staple_food___12'] == 1 ) ) )
             else:
                 mask = self.data[col].isna()
 
@@ -800,9 +815,13 @@ class BranchingLogicHandler:
             elif col == 'carf_stroke_diagnosed':
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_stroke'] == 1 ) )
-            elif col in ['carf_angina_treatment', 'carf_angina_treat_now', 'carf_angina_traditional', 'carf_pain']:
+            elif col in ['carf_angina_treatment', 'carf_pain_location',
+                         'carf_angina_traditional', 'carf_pain', 'carf_pain2']:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_angina'] == 1 ) )
+            elif col == 'carf_angina_treat_now':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_angina_treatment'] == 1 ) )
             elif col == 'carf_angina_meds':
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_angina_treat_now'] == 1 ) )
@@ -918,11 +937,12 @@ class BranchingLogicHandler:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_kidney_family_type'] == 1 ) )
 
-            elif col in ['carf_joints_swollen', 'carf_joints_involved', 'carf_when_they_hurt', 'carf_symptoms_how_long']:
+            elif col in ['carf_joints_swollen', 'carf_joints_involved', 'carf_arthritis_results',
+                         'carf_when_they_hurt', 'carf_symptoms_how_long']:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_joints_swollen_pain'] == 1 ) )
 
-            elif col in ['carf_acpa', 'carf_esr_crp'] :
+            elif col in ['carf_acpa', 'carf_esr_crp', 'carf_rheumatoid_factor'] :
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_arthritis_results'] == 1 ) )
 
@@ -950,9 +970,6 @@ class BranchingLogicHandler:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_osteo_knee_replace'] == 1 ) )
 
-            elif col == 'carf_rheumatoid_factor':
-                mask = ( self.data[col].isna() &
-                          ( self.data['carf_arthritis_results'] == 1 ) )
             else:
                 mask = self.data[col].isna()
 
@@ -1493,13 +1510,14 @@ class BranchingLogicHandler:
                     'demo_date_of_birth_known',
                     'demo_dob_new',
                     'demo_approx_dob_new',
+                    'demo_gender',
                     'cogn_comments',
                     'rspe_participation',
                     'rspe_participation_note',
                     'spiro_comment',
                     'rspir_salb_admin',
                     'rspir_comment',
-                    'ultr_dxa_scan_completed',
+                    # 'ultr_dxa_scan_completed',
                     'comp_comment_no_14',
                     'comp_comment_no_15',
                     'comp_comment_no_16',

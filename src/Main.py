@@ -13,53 +13,33 @@ import pandas as pd
 import xlsxwriter
 from datetime import datetime
 
-
 def main():
-    datestr = datetime.today().strftime('%Y%m%d')
-    siteStr = 'agincourt'
     outputDir = './resources/'
 
-    csv_link = outputDir + 'data_{}_{}.csv'.format(siteStr, datestr)
-
-    # 1     fetch data
-    # takes some time
-    ImportData(csv_link)
-
     # Process site feedback
-    # SiteFeedbackHandler.handle_outlier_feedback(outputDir + 'outliers_soweto_20200818_returned.xlsx')
+    # SiteFeedbackHandler.handle_outlier_feedback(outputDir + 'outliers_agincourt_20210604_ret.xlsx')
 
-    # 2     populate the database
-    # populateDatabase = DatabasePopulator.PopulateDatabase(dataset)
-    # populateDatabase.add_records_to_database()
+    datestr = datetime.today().strftime('%Y%m%d')
+    sites = ['agincourt', 'dimamo', 'soweto', 'nairobi', 'nanoro', 'navrongo']
 
-    # Generate outlier report
-    instruments = Instruments(csv_link)
-    outliers_writer = pd.ExcelWriter(outputDir + 'outliers_{}_{}.xlsx'.format(siteStr, datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
-    DataAnalyser(outputDir, instruments, outliers_writer).outliers()
-    outliers_writer.save()
+    # sites = ['navrongo']
 
-    # Generate missing report
-    missing_writer = pd.ExcelWriter(outputDir + 'missing_{}_{}.xlsx'.format(siteStr, datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
-    BranchingLogicHandler(outputDir, csv_link, missing_writer).write_report()
-    missing_writer.save()
+    for site in sites:
+        csv_link = outputDir + 'data_{}_{}.csv'.format(site, datestr)
+        print(csv_link)
 
-    # 7    list of email addresses. Appended more contacts
-    # contacts = ['jajawandera@gmail.com', 'u17253129@tuks.co.za']
+        ImportData(csv_link)
 
-    # # 8    list of attachments initialized with the report
-    # attachments = [dataAnalyser.get_report(), pair_plot]
+        # Generate outlier report
+        instruments = Instruments(csv_link)
+        outliers_writer = pd.ExcelWriter(outputDir + 'outliers_{}_{}.xlsx'.format(site, datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
+        DataAnalyser(outputDir, instruments, outliers_writer).outliers()
+        outliers_writer.save()
 
-    # # 9     add all the jpeg files to the list
-    # for plot in dataAnalyser.get_visualizations():
-    #     attachments.append(plot)
-
-    # # 10  write general report.csv file
-    # attachments.append(report_link)
-
-    # 11     sending the email
-    # emailHandler = EmailHandler.EmailHandler(contacts, attachments)
-    # emailHandler.send_email()
-
+        # Generate missing report
+        missing_writer = pd.ExcelWriter(outputDir + 'missing_{}_{}.xlsx'.format(site, datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
+        BranchingLogicHandler(outputDir, csv_link, missing_writer).write_report()
+        missing_writer.save()
 
 if __name__ == '__main__':
     main()

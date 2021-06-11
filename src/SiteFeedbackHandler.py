@@ -40,6 +40,7 @@ class SiteFeedbackHandler:
                            'Is Correct':'is_correct', 'Comment/Updated Value':'comment'}, inplace=True)
 
         df['new_value'] = new_vals
+        df['new_value'][df['new_value'] == 999] = -999
         df['comment'] = comments
 
         # Convert to CSV to upload to REDCap

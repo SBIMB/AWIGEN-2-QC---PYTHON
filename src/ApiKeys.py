@@ -4,6 +4,9 @@ def GetApiKey(key):
         'dimamo'    : '',
         'agincourt' : '',
         'nairobi'   : '',
-        'exceptions': ''}    #TODO Update with other sites
+        'nanoro'    : '',
+        'navrongo'  : '',
+        'exceptions': '',
+        'biomarkers': '' }
 
     return api_keys[key]
