@@ -1,16 +1,9 @@
 import pandas as pd
 
-# This class has functions which return a specific instrument
-# An instrument contains variables belonging to the same group
-# All instruments were assigned study_id variable for merging purposes
-
-
 class Instruments:
 
-    def __init__(self, csv_link):
-        # A list of missing value types
-        missing_values = ["n/a", "na", "--"]
-        self.data = pd.read_csv(csv_link, na_values=missing_values, index_col=None)
+    def __init__(self, data):
+        self.data = data
 
     def get_a_phase_1_data(self):
         colNames = self.data.columns[(self.data.columns.str.contains('phase_1'))]

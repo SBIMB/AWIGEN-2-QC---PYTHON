@@ -1,20 +1,11 @@
-#from builtins import print
-
 import pandas as pd
 import csv
 import os
 
-
 class BranchingLogicHandler:
-
-    def __init__(self, outputDir, csv_link, excel_writer):
-        self.outputDir = outputDir
-
-        self.csv_link = csv_link
-        # initiate data frame
-        self.data = pd.read_csv(csv_link, index_col=0)
-
-        self.excelWriter = excel_writer
+    def __init__(self, data, site):
+        self.data = data.set_index('study_id')
+        self.site = site
 
     def get_missing_ids(self, input_df):
         if input_df.size == 0: return
@@ -250,6 +241,16 @@ class BranchingLogicHandler:
         for col in sorted(colNames.to_list()):
             if col in self.ignored_cols:
                 continue
+            elif col == 'cogn_orientation_score':
+                mask = ( self.data[col].isna() &
+                         ( self.data['cogn_year'] * 1 >= 0  ) &
+                         ( self.data['cogn_what_is_the_month'] * 1 >= 0 ) &
+                         ( self.data['cogn_day_of_the_month'] * 1 >= 0 ) &
+                         ( self.data['cogn_country_of_residence'] * 1 >= 0 ) &
+                         ( self.data['cogn_district_province'] * 1 >= 0 ) &
+                         ( self.data['cogn_village_town_city'] * 1 >= 0 ) &
+                         ( self.data['cogn_weekdays_forward'] * 1 >= 0 ) &
+                         ( self.data['cogn_weekdays_backwards'] * 1 >= 0 ) )
             else:
                 mask = self.data[col].isna()
 
@@ -534,7 +535,7 @@ class BranchingLogicHandler:
             if col in self.ignored_cols:
                 continue
             elif col in ['genh_starchy_staple_freq', 'genh_staple_servings']:
-                if 'nanoro' in self.csv_link.lower():
+                if self.site == 'nanoro':
                     mask = ( self.data[col].isna() & ( ( self.data['genh_starchy_staple_food___2'] == 1 ) |
                                                     ( self.data['genh_starchy_staple_food___3'] == 1 ) |
                                                     ( self.data['genh_starchy_staple_food___13'] == 1 ) |
@@ -1283,6 +1284,9 @@ class BranchingLogicHandler:
             if col in self.ignored_cols:
                 continue
 
+            elif col == 'bloc_hours_last_drink':
+                mask = ( self.data[col].isna() &
+                         ( self.data['bloc_last_drink_time'].notna() ) )
             elif col == 'bloc_last_ate_hrs':
                 mask = ( self.data[col].isna() &
                          ( self.data['bloc_last_eat_time'].notna() ) )
@@ -1344,12 +1348,18 @@ class BranchingLogicHandler:
                 mask = ( self.data[col].isna() &
                          ( self.data['poc_test_conducted'] == 0 ) )
             elif col in ['poc_instrument_serial_num', 'poc_test_strip_batch_num', 'poc_glucose_test_result', 'poc_chol_results_provided',
-                         'poc_teststrip_expiry_date', 'poc_test_date', 'poc_test_time', 'poc_chol_result']:
+                         'poc_teststrip_expiry_date', 'poc_test_date', 'poc_test_time', 'poc_chol_result','poc_gluc_results_provided']:
                 mask = ( self.data[col].isna() &
                          ( self.data['poc_test_conducted'] == 1 ) )
             elif col == 'poc_gluc_results_notes':
                 mask = ( self.data[col].isna() &
                          ( self.data['poc_gluc_results_provided'] == 0 ) )
+            elif col == 'poc_glucresults_discussed':
+                mask = ( self.data[col].isna() &
+                         ( self.data['poc_gluc_results_provided'] == 1 ) )
+            elif col == 'poc_cholresults_discussed':
+                mask = ( self.data[col].isna() &
+                         ( self.data['poc_chol_results_provided'] == 1 ) )
             elif col == 'poc_chol_results_notes':
                 mask = ( self.data[col].isna() &
                          ( self.data['poc_chol_results_provided'] == 0 ) )
@@ -1420,8 +1430,7 @@ class BranchingLogicHandler:
 
         return self.get_missing_ids(df)
 
-
-    def write_report(self):
+    def write_missingness_report(self, xlsx_writer):
         df = pd.DataFrame()
 
         # df2 = pd.DataFrame()
@@ -1448,18 +1457,18 @@ class BranchingLogicHandler:
         df = df.sort_values(by=['study_id', 'Instrument'])
         missing_summary = df['Data Field'].value_counts().reset_index()
 
-        df.to_excel(self.excelWriter, sheet_name='Missing Data', startcol=0, startrow=0, index=False)
-        self.excelWriter.sheets['Missing Data'].set_column(0, 0 , 20)
-        self.excelWriter.sheets['Missing Data'].set_column(1, 1 , 30)
-        self.excelWriter.sheets['Missing Data'].set_column(2, 2 , 30)
+        df.to_excel(xlsx_writer, sheet_name='Missing Data', startcol=0, startrow=0, index=False)
+        xlsx_writer.sheets['Missing Data'].set_column(0, 0 , 20)
+        xlsx_writer.sheets['Missing Data'].set_column(1, 1 , 30)
+        xlsx_writer.sheets['Missing Data'].set_column(2, 2 , 30)
 
         missing_summary['Comments'] = ''
         missing_summary.rename(columns={'index':'Data Field', 'Data Field' : 'Total Missing'}, inplace=True)
 
-        missing_summary.to_excel(self.excelWriter, sheet_name='Missing Data Summary', startcol=0, startrow=0, index=False)
-        self.excelWriter.sheets['Missing Data Summary'].set_column(0, 0 , 30)
-        self.excelWriter.sheets['Missing Data Summary'].set_column(1, 1 , 20)
-        self.excelWriter.sheets['Missing Data Summary'].set_column(2, 2 , 30)
+        missing_summary.to_excel(xlsx_writer, sheet_name='Missing Data Summary', startcol=0, startrow=0, index=False)
+        xlsx_writer.sheets['Missing Data Summary'].set_column(0, 0 , 30)
+        xlsx_writer.sheets['Missing Data Summary'].set_column(1, 1 , 20)
+        xlsx_writer.sheets['Missing Data Summary'].set_column(2, 2 , 30)
 
     instrument_dict = {
         # 'a_phase_1_data'                    : check_a_phase_1_data,

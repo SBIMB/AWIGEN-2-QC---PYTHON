@@ -9,23 +9,15 @@ from io import StringIO
 import xlsxwriter
 import ApiKeys
 
-# sns.set(style="ticks")
+from Instruments import Instruments
+from RedcapApiHandler import RedcapApiHandler
 
 class DataAnalyser:
-
-    def __init__(self, resource_dir, instruments, excel_writer):
-        self.separator = "________________________________________________________________________________\n"
-
-        self.instruments = instruments
-        self.excelWriter = excel_writer
+    def __init__(self, resource_dir, data, site):
+        self.data = data
+        self.instruments = Instruments(data)
         self.resource_dir = resource_dir
-
-    def get_visualizations(self):
-        images = []
-        for file in os.listdir(self.resource_dir):
-            if file.endswith(".png"):
-                images.append(self.resource_dir + file)
-        return images
+        self.site = site
 
     def plot_histogram(self, data, col, outliers):
         q1 = data.quantile(0.25)
@@ -33,13 +25,22 @@ class DataAnalyser:
         median = np.round(data.median(),1)
         iqr = q3 - q1
 
-        lower_bound = q1 - 1.5 * iqr
-        upper_bound = q3 + 1.5 * iqr
+        std = np.round(data.std(),1)
+        mean = np.round(data.mean(),1)
+
+        upper_limit_iqr = q3 + 1.5 * iqr
+        lower_limit_iqr = q1 - 1.5 * iqr
+
+        upper_limit_std = mean + std * 3
+        lower_limit_std = mean - std * 3
+
+        upper_bound = max(upper_limit_iqr, upper_limit_std)
+        lower_bound = min(lower_limit_iqr, lower_limit_std)
 
         plt.figure(figsize=(16*0.9, 9*0.9), dpi=200)
         plt.title(col)
 
-        ax = data.plot.hist(bins=100)
+        ax = data.plot.hist(bins=50)
 
         # Plot and label the median
         plt.axvline(median, color='k', linestyle='dashed', linewidth=1)
@@ -55,7 +56,7 @@ class DataAnalyser:
         outliers = outliers.to_frame().sort_values(by=col)
 
         # Get the histogram bins and the number of values in each bin
-        bar_info = pd.cut(data, 100)
+        bar_info = pd.cut(data, 50)
         num_vals = bar_info.value_counts().sort_index()
 
         # This loop is used to write the outlier IDs above the histogram bins
@@ -136,6 +137,8 @@ class DataAnalyser:
             if outliers.size == 0:
                 continue
 
+            # self.plot_histogram(data, col, outliers)
+
             outliers = outliers.to_frame()
 
             outliers.rename(columns={col:'Value'}, inplace=True)
@@ -152,48 +155,8 @@ class DataAnalyser:
 
         return data_frame
 
-    def get_exceptions(self, csv):
-        report_ids = {'soweto': 23621, 'agincourt': 25317,
-                      'dimamo': 25318, 'nairobi': 25813,
-                      'nanoro': 28100, 'navrongo': 28735}
-
-        site_ids = {'agincourt': 1, 'dimamo': 2, 'nairobi': 3,
-                    'nanoro': 4, 'navrongo': 5, 'soweto': 6}
-
-        site = [key for key, value in report_ids.items() if key in csv.lower()][0]
-        report_id = report_ids[site]
-        site_id = site_ids[site]
-
-        api_key = ApiKeys.GetApiKey('exceptions')
-
-        url = 'https://redcap.core.wits.ac.za/redcap/api/'
-
-        # specify the token and report id for report content
-        data = {
-            'token': api_key,
-            'content': 'report',
-            'format': 'csv',
-            'report_id': report_id,
-            'rawOrLabel': 'raw',
-            'rawOrLabelHeaders': 'raw',
-            'exportCheckboxLabel': 'false',
-            'returnFormat': 'json'
-        }
-
-        r = requests.post(url, data)
-        if r.text == '\n':
-            df = pd.DataFrame(columns = ['study_id','Data Field'])
-            df.set_index('study_id', inplace=True)
-        else:
-            df = pd.read_csv(StringIO(r.text),index_col='study_id')
-            df = df[df['is_correct'].notna() | df['comment'].notna() | df['new_value'].notna()]
-            df = df[df['site'] == site_id]
-            df = df[['data_field']]
-            df.rename(columns={'data_field': 'Data Field'}, inplace=True)
-        return df
-
-    def outliers(self):
-        exceptions = self.get_exceptions(self.excelWriter.path)
+    def write_outliers_report(self, outliers_xlsx_writer):
+        exceptions = RedcapApiHandler(self.site).get_exceptions_from_redcap()
 
         df = pd.DataFrame()
 
@@ -214,22 +177,21 @@ class DataAnalyser:
         df = df[['Data Field', 'Instrument', 'Value', 'Lower Limit', 'Upper Limit', 'Is Correct', 'Comment/Updated Value']]
         df = df.sort_values(by=['study_id', 'Instrument'])
         df.reset_index(inplace=True)
-        df.to_excel(self.excelWriter, sheet_name='Outliers', startcol=0, startrow=3, index=False)
+        df.to_excel(outliers_xlsx_writer, sheet_name='Outliers', startcol=0, startrow=3, index=False)
 
         lower_limit_text = 'Lower Limit = min(mean - std * 3, 1st quartile - 1.5 * IQR)'
         upper_limit_text = 'Upper Limit = max(mean + std * 3, 3rd quartile + 1.5 * IQR)'
 
-        self.excelWriter.sheets['Outliers'].write(0, 0, lower_limit_text)
-        self.excelWriter.sheets['Outliers'].write(1, 0, upper_limit_text)
-
-        self.excelWriter.sheets['Outliers'].set_column(0, 0 , 15)
-        self.excelWriter.sheets['Outliers'].set_column(1, 1 , 30)
-        self.excelWriter.sheets['Outliers'].set_column(2, 2 , 30)
-        self.excelWriter.sheets['Outliers'].set_column(3, 3 , 10)
-        self.excelWriter.sheets['Outliers'].set_column(4, 4 , 12)
-        self.excelWriter.sheets['Outliers'].set_column(5, 5 , 12)
-        self.excelWriter.sheets['Outliers'].set_column(6, 6 , 20)
-        self.excelWriter.sheets['Outliers'].set_column(7, 7 , 30)
+        outliers_xlsx_writer.sheets['Outliers'].write(0, 0, lower_limit_text)
+        outliers_xlsx_writer.sheets['Outliers'].write(1, 0, upper_limit_text)
+        outliers_xlsx_writer.sheets['Outliers'].set_column(0, 0 , 15)
+        outliers_xlsx_writer.sheets['Outliers'].set_column(1, 1 , 30)
+        outliers_xlsx_writer.sheets['Outliers'].set_column(2, 2 , 30)
+        outliers_xlsx_writer.sheets['Outliers'].set_column(3, 3 , 10)
+        outliers_xlsx_writer.sheets['Outliers'].set_column(4, 4 , 12)
+        outliers_xlsx_writer.sheets['Outliers'].set_column(5, 5 , 12)
+        outliers_xlsx_writer.sheets['Outliers'].set_column(6, 6 , 20)
+        outliers_xlsx_writer.sheets['Outliers'].set_column(7, 7 , 30)
 
     # Skip all dropdowns/checkboxes/radio buttons
     ignored_cols = ['demo_home_language',

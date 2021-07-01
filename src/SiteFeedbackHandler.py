@@ -1,7 +1,6 @@
 from functools import reduce
 import pandas as pd
-from ExportData import ExportData
-
+from RedcapApiHandler import RedcapApiHandler
 
 class SiteFeedbackHandler:
 
@@ -46,7 +45,9 @@ class SiteFeedbackHandler:
         # Convert to CSV to upload to REDCap
         csvString = df.to_csv()
 
-        ExportData().set_records(csvString, site)
+        RedcapApiHandler(site).upload_exceptions_to_redcap(csvString)
+
+        # ExportData().set_records(csvString, site)
 
         # test_writer = pd.ExcelWriter('test.xlsx', engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
         # df.to_excel(test_writer)

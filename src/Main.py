@@ -1,12 +1,11 @@
-import EmailHandler
 #import DatabasePopulator
 from Instruments import Instruments
-from MergeHandler import MergeHandler
 from DataAnalyser import DataAnalyser
 from BranchingLogic import BranchingLogicHandler
-import ExportData
-from ImportData import ImportData
+
 from SiteFeedbackHandler import SiteFeedbackHandler
+
+from RedcapApiHandler import RedcapApiHandler
 
 import pandas as pd
 
@@ -28,17 +27,16 @@ def main():
         csv_link = outputDir + 'data_{}_{}.csv'.format(site, datestr)
         print(csv_link)
 
-        ImportData(csv_link)
+        data = RedcapApiHandler(site).export_from_redcap(csv_link)
 
         # Generate outlier report
-        instruments = Instruments(csv_link)
         outliers_writer = pd.ExcelWriter(outputDir + 'outliers_{}_{}.xlsx'.format(site, datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
-        DataAnalyser(outputDir, instruments, outliers_writer).outliers()
+        DataAnalyser(outputDir, data, site).write_outliers_report(outliers_writer)
         outliers_writer.save()
 
         # Generate missing report
         missing_writer = pd.ExcelWriter(outputDir + 'missing_{}_{}.xlsx'.format(site, datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
-        BranchingLogicHandler(outputDir, csv_link, missing_writer).write_report()
+        BranchingLogicHandler(data, site).write_missingness_report(missing_writer)
         missing_writer.save()
 
 if __name__ == '__main__':
