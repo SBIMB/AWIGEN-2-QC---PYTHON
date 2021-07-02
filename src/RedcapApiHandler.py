@@ -63,7 +63,7 @@ class RedcapApiHandler:
             'returnFormat': 'json'
         }
 
-        r = requests.post(self.url, data)
+        r = requests.post(url, data)
         print('HTTP Status: ' + str(r.status_code))
         print(r.text)
 

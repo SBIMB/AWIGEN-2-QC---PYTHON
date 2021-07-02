@@ -6,7 +6,7 @@ class SiteFeedbackHandler:
 
     @staticmethod
     def handle_outlier_feedback(csv):
-        df = pd.read_excel(csv, skiprows=3, index_col='study_id')
+        df = pd.read_excel(csv, skiprows=3, index_col='study_id', converters={'Is Correct': str.strip})
 
         # We only want rows where 'Is Correct' or 'Comment/Updated Value' has been filled in
         mask = df['Is Correct'].notna() | df['Comment/Updated Value'].notna()
@@ -46,8 +46,6 @@ class SiteFeedbackHandler:
         csvString = df.to_csv()
 
         RedcapApiHandler(site).upload_exceptions_to_redcap(csvString)
-
-        # ExportData().set_records(csvString, site)
 
         # test_writer = pd.ExcelWriter('test.xlsx', engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
         # df.to_excel(test_writer)
