@@ -860,10 +860,12 @@ class BranchingLogicHandler:
             if col in self.ignored_cols:
                 continue
 
-            elif col in ['carf_hypertension_12mnths', 'carf_hypertension_treat',
-                         'carf_hypertension_meds']:
+            elif col in ['carf_hypertension_12mnths', 'carf_hypertension_treat']:
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_hypertension'] == 1 ) )
+            elif col == 'carf_hypertension_meds':
+                mask = ( self.data[col].isna() &
+                         ( self.data['carf_hypertension_treat'] == 1 ) )
             elif col == 'carf_hypertension_medlist':
                 mask = ( self.data[col].isna() &
                          ( self.data['carf_hypertension_meds'] == 1 ) )
@@ -1286,10 +1288,12 @@ class BranchingLogicHandler:
 
             elif col == 'bloc_hours_last_drink':
                 mask = ( self.data[col].isna() &
-                         ( self.data['bloc_last_drink_time'].notna() ) )
+                         ( ( self.data['bloc_last_drink_time'].notna() ) &
+                           ( self.data['bloc_last_ate_hrs'] >= 0 ) ) )
             elif col == 'bloc_last_ate_hrs':
                 mask = ( self.data[col].isna() &
-                         ( self.data['bloc_last_eat_time'].notna() ) )
+                         ( ( self.data['bloc_last_eat_time'].notna() ) &
+                           ( self.data['bloc_last_ate_hrs'] >= 0 ) ) )
             elif col == 'bloc_red_tubes_num':
                 mask = ( self.data[col].isna() &
                          ( self.data['bloc_two_red_tubes'] == 0 ) )
@@ -1322,7 +1326,8 @@ class BranchingLogicHandler:
             elif col == 'bloc_specify_reason':
                 mask = ( self.data[col].isna() &
                          ( self.data['bloc_urine_collected'] == 0 ) )
-            elif col in ['bloc_urcontainer_batchnum', 'bloc_urine_tube_expiry']:
+            elif col in ['bloc_urcontainer_batchnum', 'bloc_urine_tube_expiry',
+                         'bloc_urine_collector', 'bloc_urine_taken_date', 'bloc_urinecollection_time']:
                 mask = ( self.data[col].isna() &
                          ( self.data['bloc_urine_collected'] == 1 ) )
             else:

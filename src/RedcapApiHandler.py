@@ -1,5 +1,6 @@
 import os
 import requests
+import csv
 import pandas as pd
 from io import StringIO
 import ApiKeys
@@ -15,7 +16,7 @@ class RedcapApiHandler:
         elif site == 'navrongo':
             self.url = 'http://awigen-navrongo.does-it.net:2280/redcap/api/'
 
-    def export_from_redcap(self, csv=None):
+    def export_from_redcap(self, csv_out=None):
         report_ids = {'soweto': 22490, 'dimamo': 21889,
                       'agincourt': 22498, 'nairobi': 24168,
                       'nanoro': 1, 'navrongo': 1}
@@ -28,19 +29,67 @@ class RedcapApiHandler:
             'content': 'report',
             'format': 'csv',
             'report_id': report_id,
+            'csvDelimiter': '\t', # Use a tab separator to avoid issues with commas in the data
             'rawOrLabel': 'raw',
             'rawOrLabelHeaders': 'raw',
             'exportCheckboxLabel': 'false',
             'returnFormat': 'json'
         }
-
         r = requests.post(self.url, api_request)
-        df = pd.read_csv(StringIO(r.text), low_memory=False)
+
+        df = pd.read_csv(StringIO(r.text), low_memory=False, sep='\t')
         
-        if csv:
-            df.to_csv(csv, index=False)
+        if csv_out:
+            df.to_csv(csv_out, index=False)
 
         return df
+
+    def upload_to_redcap(self, csv_data):
+        report_ids = {'soweto': 22490, 'dimamo': 21889,
+                      'agincourt': 22498, 'nairobi': 24168,
+                      'nanoro': 1, 'navrongo': 1}
+
+        api_key = ApiKeys.GetApiKey(self.site)
+        report_id = report_ids[self.site]
+
+        data = {
+            'token': api_key,
+            'content': 'record',
+            'format': 'csv',
+            'type': 'flat',
+            'report_id': report_id,
+            'csvDelimiter': '\t', # Use a tab separator to avoid issues with commas in the data
+            'overwriteBehavior': 'normal',
+            'data': csv_data,
+            'returnContent': 'count',
+            'returnFormat': 'json'
+        }
+
+        r = requests.post(self.url, data)
+        print('HTTP Status: ' + str(r.status_code))
+        print(r.text)
+
+    def upload_biomarkers_to_redcap(self, csv_data):
+        report_id = 27090
+        api_key = ApiKeys.GetApiKey('biomarkers')
+        url = 'https://redcap.core.wits.ac.za/redcap/api/'
+
+        data = {
+            'token': api_key,
+            'content': 'record',
+            'format': 'csv',
+            'type': 'flat',
+            'report_id': report_id,
+            'overwriteBehavior': 'normal',
+            'forceAutoNumber': 'true',
+            'data': csv_data,
+            'returnContent': 'count',
+            'returnFormat': 'json'
+        }
+
+        r = requests.post(url, data)
+        print('HTTP Status: ' + str(r.status_code))
+        print(r.text)
 
     def upload_exceptions_to_redcap(self, csv_data):
         report_ids = {'soweto': 23621, 'agincourt': 25317,
