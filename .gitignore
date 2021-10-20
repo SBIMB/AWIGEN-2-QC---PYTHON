@@ -1,6 +1,9 @@
 # resources folder
 resources/*.jpeg
 resources/*.txt
+resources/*.csv
+resources/*.xlsx
+resources/*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -106,3 +109,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# VS Code
+.vscode/

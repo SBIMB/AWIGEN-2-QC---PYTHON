@@ -1,67 +1,40 @@
-import EmailHandler
-import DatabasePopulator
-import Instruments
-from MergeHandler import MergeHandler
+from Instruments import Instruments
 from DataAnalyser import DataAnalyser
 from BranchingLogic import BranchingLogicHandler
-import pandas as pd
-import ImportData
+from SiteFeedbackHandler import SiteFeedbackHandler
+from RedcapApiHandler import RedcapApiHandler
 
+import pandas as pd
+
+import xlsxwriter
+from datetime import datetime
 
 def main():
-    # 1     fetch data
-    # takes some time
-    importData = ImportData.ImportData()
-    csv_link = importData.get_records()
+    outputDir = './resources/'
 
-    # 2     populate the database
-    dataset = pd.read_csv(csv_link)
-    # populateDatabase = DatabasePopulator.PopulateDatabase(dataset)
-    # populateDatabase.add_records_to_database()
+    # Process site feedback
+    # SiteFeedbackHandler.handle_outlier_feedback(outputDir + 'outliers_agincourt_20210604_ret.xlsx')
 
-    # 3    specify the instrument
-    instruments = Instruments.Instruments(csv_link)
-    anthropometry = instruments.get_anthropometric_measurements()
-    health_diet = instruments.get_c_general_health_diet()
+    datestr = datetime.today().strftime('%Y%m%d')
+    sites = ['agincourt', 'dimamo', 'nanoro', 'navrongo'] # , 'soweto', 'nairobi',]
 
-    # 4    merge instruments
-    merge_data = MergeHandler(anthropometry, health_diet)
-    data = merge_data.join_data_frames()
+    # sites = ['navrongo']
 
-    # 5    data analysis
-    dataAnalyser = DataAnalyser(anthropometry)
+    for site in sites:
+        csv = outputDir + 'data_{}_{}.csv'.format(site, datestr)
+        print(csv)
 
-    # 6    add columns to plot pairwise relationships in a dataset
-    pair_plot = dataAnalyser.set_pair_plot('anth_standing_height',
-                                           'anth_weight',
-                                           'anth_waist_circumf_1',
-                                           'anth_waist_circumf_2',
-                                           'anth_waist_circumf',
-                                           'anth_hip_circumf_1',
-                                           'anth_hip_circumf_2',
-                                           'anth_hip_circumf')
+        data = RedcapApiHandler(site).export_from_redcap(csv)
 
-    # 7    list of email addresses. Appended more contacts
-    contacts = ['jajawandera@gmail.com', 'u17253129@tuks.co.za']
+        # Generate outlier report
+        outliers_writer = pd.ExcelWriter(outputDir + 'outliers_{}_{}.xlsx'.format(site, datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
+        DataAnalyser(outputDir, data, site).write_outliers_report(outliers_writer)
+        outliers_writer.save()
 
-    # 8    list of attachments initialized with the report
-    attachments = [dataAnalyser.get_report(), pair_plot]
-
-    # 9     add all the jpeg files to the list
-    for plot in dataAnalyser.get_visualizations():
-        attachments.append(plot)
-
-    # 10  write general report.csv file
-    # add report to attachments
-    branchingLogicHandler = BranchingLogicHandler(csv_link)
-    report_link = branchingLogicHandler.write_report()
-    branchingLogicHandler.get_report_summary()
-    attachments.append(report_link)
-
-    # 11     sending the email
-    emailHandler = EmailHandler.EmailHandler(contacts, attachments)
-    emailHandler.send_email()
-
+        # Generate missing report
+        missing_writer = pd.ExcelWriter(outputDir + 'missing_{}_{}.xlsx'.format(site, datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated
+        BranchingLogicHandler(data, site).write_missingness_report(missing_writer)
+        missing_writer.save()
 
 if __name__ == '__main__':
     main()
