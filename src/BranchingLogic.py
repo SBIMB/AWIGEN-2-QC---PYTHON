@@ -214,10 +214,10 @@ class BranchingLogicHandler:
                 continue
             elif col == 'educ_highest_years' or col == 'educ_formal_years':
                 mask = ( self.data[col].isna() &
-                         self.data['educ_highest_level'].between(2, 4, inclusive=True) )
+                         self.data['educ_highest_level'].between(2, 4, inclusive='both') )
             elif col == 'empl_days_work':
                 mask = ( self.data[col].isna() &
-                         self.data['empl_status'].between(1, 4, inclusive=True) )
+                         self.data['empl_status'].between(1, 4, inclusive='both') )
             else:
                 mask = self.data[col].isna()
 

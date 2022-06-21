@@ -130,7 +130,7 @@ class DataAnalyser:
             lower_limit = min(lower_limit_iqr, lower_limit_std)
 
             # Find outliers i.e. values outside the range (q1 - 1.5 * iqr, q3 + 1.5 * iqr)
-            mask = data.between(lower_limit, upper_limit, inclusive=True)
+            mask = data.between(lower_limit, upper_limit, inclusive='both')
             outliers = data[~mask].dropna()
 
             # Skip iteration if there are no outliers
@@ -194,7 +194,9 @@ class DataAnalyser:
         outliers_xlsx_writer.sheets['Outliers'].set_column(7, 7 , 30)
 
     # Skip all dropdowns/checkboxes/radio buttons
-    ignored_cols = ['demo_home_language',
+    ignored_cols = ['bloc_hours_last_drink',
+                    'bloc_last_ate_hrs',
+                    'demo_home_language',
                     'home_language_confirmation',
                     'phase_1_site_id_1',
                     'phase_1_gender',

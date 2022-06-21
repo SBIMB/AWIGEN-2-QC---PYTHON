@@ -13,18 +13,19 @@ def main():
     outputDir = './resources/'
 
     # Process site feedback
-    # SiteFeedbackHandler.handle_outlier_feedback(outputDir + 'outliers_agincourt_20210604_ret.xlsx')
+    # SiteFeedbackHandler.handle_outlier_feedback(outputDir + 'outliers_dimamo_20220605_ret.xlsx')
 
     datestr = datetime.today().strftime('%Y%m%d')
-    sites = ['agincourt', 'dimamo', 'nanoro', 'navrongo'] # , 'soweto', 'nairobi',]
+    # sites = ['dimamo', 'nanoro', 'navrongo', 'agincourt', 'soweto', 'nairobi']
 
-    # sites = ['navrongo']
+    sites = ['dimamo', 'nanoro', 'navrongo']
 
     for site in sites:
         csv = outputDir + 'data_{}_{}.csv'.format(site, datestr)
         print(csv)
 
         data = RedcapApiHandler(site).export_from_redcap(csv)
+        data = data[data['redcap_event_name'] == 'phase_2_arm_1']
 
         # Generate outlier report
         outliers_writer = pd.ExcelWriter(outputDir + 'outliers_{}_{}.xlsx'.format(site, datestr), engine='xlsxwriter') # pylint: disable=abstract-class-instantiated

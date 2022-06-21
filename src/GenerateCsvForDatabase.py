@@ -22,13 +22,21 @@ for site in sites:
     csv_str = outputDir + 'data_{}_{}.csv'.format(site, datestr)
     print(csv_str)
 
-    redcap_data = RedcapApiHandler(site).export_from_redcap(csv_str)
-    # redcap_data = pd.read_csv(csv_str, low_memory=False)
+    input_data = RedcapApiHandler(site).export_from_redcap(csv_str)
+    # input_data = pd.read_csv(csv_str, low_memory=False, sep='\t')
 
+    redcap_data = input_data[input_data['redcap_event_name'] == 'phase_2_arm_1']
     redcap_data = redcap_data.set_index('study_id')
 
-    if site is 'agincourt':
+    phase1_data = input_data[input_data['redcap_event_name'] == 'phase_1_arm_1']
+    phase1_data = phase1_data.set_index('study_id')
+
+    redcap_data['demo_gender'][redcap_data['demo_gender'].isna()] = phase1_data['phase_1_gender'][redcap_data['demo_gender'].isna()]
+
+    if site == 'agincourt':
         redcap_data['gene_site'] = 1
+        redcap_data['anth_standing_height'][redcap_data['anth_standing_height'] > 0] = redcap_data['anth_standing_height'][redcap_data['anth_standing_height'] > 0] * 10
+        redcap_data['anth_standing_height'] = redcap_data['anth_standing_height'].round(0)
 
     df_out = df_out.append(redcap_data)
 
@@ -73,16 +81,14 @@ df_out = df_out.drop(columns=[
 'carf_chol_treatment_now___navu','carf_osteo_sites___navu','resp_copd_suffer___navu','resp_measles_suffer___navu',
 'rspe_infection___navu'])
 
+df_out = pd.DataFrame(df_out, dtype=object)
+
 df_out[df_out == -999] = np.nan
 df_out[df_out == '-999'] = np.nan
 
-df_out = pd.DataFrame(df_out, dtype=object)
-
-df_out = df_out.astype(str).replace('\.0+$', '', regex=True)
-df_out['cogn_delayed_recall_score'] = df_out['cogn_delayed_recall_score'].str.replace(r'[^0-9]+', '').replace('', 'nan')
-df_out['cogn_recognition_score'] = df_out['cogn_recognition_score'].str.replace(r'[^0-9]+', '').replace('', 'nan')
-
-df_out.to_csv(outputDir + 'all_data_{0}.csv'.format(datestr), quoting=csv.QUOTE_NONE, encoding='utf-8', sep='\t')
+df = df_out.astype(str)
+df = df.replace(to_replace = "\.0+$", value = "", regex = True)
+df.to_csv(outputDir + 'all_data_{0}.csv'.format(datestr), quoting=csv.QUOTE_NONE, encoding='utf-8', sep='\t')
 
 # \i create_awigen2_table_all_data.sql
 # \copy all_data FROM './all_data_20210824.csv' WITH (FORMAT CSV, DELIMITER E'\t', NULL 'nan', HEADER)

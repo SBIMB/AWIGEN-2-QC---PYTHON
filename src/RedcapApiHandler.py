@@ -14,7 +14,8 @@ class RedcapApiHandler:
         elif site == 'nanoro':
             self.url = 'http://awigen-nanoro.does-it.net:2280/api/'
         elif site == 'navrongo':
-            self.url = 'http://awigen-navrongo.does-it.net:2280/redcap/api/'
+            # self.url = 'http://awigen-navrongo.does-it.net:2280/redcap/api/'
+            self.url = 'http://45.222.205.18:2280/redcap/api/'
 
     def export_from_redcap(self, csv_out=None):
         report_ids = {'soweto': 22490, 'dimamo': 21889,
@@ -40,7 +41,7 @@ class RedcapApiHandler:
         df = pd.read_csv(StringIO(r.text), low_memory=False, sep='\t')
         
         if csv_out:
-            df.to_csv(csv_out, index=False)
+            df.to_csv(csv_out, index=False, sep='\t')
 
         return df
 
