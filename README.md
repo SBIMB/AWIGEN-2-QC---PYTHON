@@ -36,6 +36,7 @@ A collection of Python scripts written for the AWI-Gen 2 data QC process.
 
 `main.py` Main file for producing the Excel sheet containing outliers from the continuous variables qc logic.
 
+`encoding.py' Script for re-encoding categorical files.
 
 
 
