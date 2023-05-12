@@ -34,6 +34,8 @@ A collection of Python scripts written for the AWI-Gen 2 data QC process.
 
 `site_summaries_phase2.py` is used to produce data distributions for all categorical variables in phase 2.
 
+`main.py` Main file for producing the Excel sheet containing outliers from the continuous variables qc logic.
+
 
 
 
