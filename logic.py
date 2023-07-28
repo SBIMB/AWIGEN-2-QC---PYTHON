@@ -42,10 +42,11 @@ class BranchingLogic:
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['preg_last_period_mon', 'preg_last_period_mon_2', 'preg_last_period']:
                 mask = ((self.data[col].isna()) & ((self.data['preg_pregnant'] ==-555) | (self.data['preg_last_period_remember'] == 0) | (self.data['preg_last_period_remember'] == 2) |\
-                                                   (self.data['preg_last_period_remember'] == -8)))
+                                                   (self.data['preg_last_period_remember'] == -8)| (self.data['preg_last_period_remember'] == -555)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'preg_period_more_than_yr':
-                mask = ((self.data[col].isna()) & (self.data['preg_pregnant'] ==-555) & ((self.data['preg_last_period_remember'] == 1) | (self.data['preg_last_period_remember'] == -8)))
+                mask = ((self.data[col].isna()) & (self.data['preg_pregnant'] ==-555) & ((self.data['preg_last_period_remember'] == 1) | (self.data['preg_last_period_remember'] == -8)|
+                                                                                         (self.data['preg_last_period_remember'] == -555)))
                 self.data[col] = self.data[col].mask(mask, -555)
         return self.data
 
@@ -65,19 +66,19 @@ class BranchingLogic:
         return self.data
 
     def frailty_measurements_logic(self):
-        frai_cols = Instruments(self.data).get_b_frailty_measurements(self)
+        frai_cols = Instruments(self.data).get_b_frailty_measurements()
         for col in frai_cols:
             if col == 'frai_comment':
-                mask = (self.data[col].isna() & ((self.data['frai_sit_stands_completed]'] == 1)| (self.data['frai_sit_stands_completed]']==2) | \
-                                                 (self.data['frai_sit_stands_completed]']==-8)))
+                mask = (self.data[col].isna() & ((self.data['frai_sit_stands_completed'] == 1)| (self.data['frai_sit_stands_completed']==2) | \
+                                                 (self.data['frai_sit_stands_completed']==-8)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'frai_comment_why':
-                mask = (self.data[col].isna() & ((self.data['rai_complete_procedure]'] == 1)| (self.data['rai_complete_procedure]']==2) | \
-                                                 (self.data['rai_complete_procedure]']==-8)))
+                mask = (self.data[col].isna() & ((self.data['frai_complete_procedure'] == 1)| (self.data['frai_complete_procedure']==2) | \
+                                                 (self.data['frai_complete_procedure']==-8)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'frai_please_comment_why':
-                mask = (self.data[col].isna() & ((self.data['frai_procedure_walk_comp]'] == 1)| (self.data['frai_procedure_walk_comp]']==2) | \
-                                                 (self.data['frai_procedure_walk_comp]']==-8)))
+                mask = (self.data[col].isna() & ((self.data['frai_procedure_walk_comp'] == 1)| (self.data['frai_procedure_walk_comp']==2) | \
+                                                 (self.data['frai_procedure_walk_comp']==-8)))
                 self.data[col] = self.data[col].mask(mask, -555)
         return self.data
 
@@ -85,33 +86,36 @@ class BranchingLogic:
         hous_col = Instruments(self.data).get_household_attributes()
         for col in hous_col:
             if col in ['hous_power_generator', 'hous_telephone', 'hous_internet_by_computer', 'hous_toilet_facilities', 'hous_tractor', 'hous_plough']:
-                mask = (self.data[col].isna() & (self.data['gene_site']==3))
+                mask = (self.data['gene_site']==3)
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['hous_washing_machine', 'hous_microwave', 'hous_computer_or_laptop', 'hous_internet_by_m_phone']:
-                mask = (self.data[col].isna() & (self.data['gene_site'] == 4))
+                mask = (self.data['gene_site'] == 4)
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col in ['hous_microwave']:
+                mask = (self.data['gene_site'] == 5)
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['hous_electric_iron']:
-                mask = (self.data[col].isna() & ((self.data['gene_site'] == 1) | (self.data['gene_site'] == 2) |
-                            (self.data['gene_site'] == 4) | (self.data['gene_site'] == 6)))
+                mask = ((self.data['gene_site'] == 1) | (self.data['gene_site'] == 2) |
+                            (self.data['gene_site'] == 4) | (self.data['gene_site'] == 6))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['hous_fan', 'hous_table', 'hous_sofa', 'hous_bed', 'hous_mattress', 'hous_blankets']:
-                mask = (self.data[col].isna() & ((self.data['gene_site'] == 1) | (self.data['gene_site'] == 2)|
-                        (self.data['gene_site'] == 6)))
+                mask = ((self.data['gene_site'] == 1) | (self.data['gene_site'] == 2)|
+                        (self.data['gene_site'] == 6))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['hous_kerosene_stove', 'hous_electric_plate', 'hous_torch', 'hous_gas_lamp', 'hous_kerosene_lamp', 'hous_wall_clock']:
-                mask = (self.data[col].isna() & ((self.data['gene_site'] == 1) | (self.data['gene_site'] == 2) |
-                        (self.data['gene_site'] == 5) | (self.data['gene_site'] == 6)))
+                mask = ((self.data['gene_site'] == 1) | (self.data['gene_site'] == 2) |
+                        (self.data['gene_site'] == 5) | (self.data['gene_site'] == 6))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['hous_plate_gas', 'hous_grinding_mill']:
-                mask = (self.data[col].isna() & ((self.data['gene_site'] == 1) | (self.data['gene_site'] == 2) |
-                        (self.data['gene_site'] == 3) | (self.data['gene_site'] == 6)))
+                mask = ((self.data['gene_site'] == 1) | (self.data['gene_site'] == 2) |
+                        (self.data['gene_site'] == 3) | (self.data['gene_site'] == 6))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['hous_portable_water']:
-                mask = (self.data[col].isna() & ((self.data['gene_site'] == 1) | (self.data['gene_site'] == 2) |
-                        (self.data['gene_site'] == 3) | (self.data['gene_site'] == 4) | (self.data['gene_site'] == 6)))
+                mask = ((self.data['gene_site'] == 1) | (self.data['gene_site'] == 2) |
+                        (self.data['gene_site'] == 3) | (self.data['gene_site'] == 4) | (self.data['gene_site'] == 6))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['hous_cattle', 'hous_other_livestock', 'hous_poultry', 'hous_tractor', 'hous_plough']:
-                mask = (self.data[col].isna() & (self.data['gene_site'] == 6))
+                mask = (self.data['gene_site'] == 6)
                 self.data[col] = self.data[col].mask(mask, -555)
         return self.data
 
@@ -131,7 +135,10 @@ class BranchingLogic:
                                                  (self.data['subs_smoke_now'] == -8)| (self.data['subs_smoke_now']==-555)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'subs_smoke_specify':
-                mask = (self.data[col].isna() & ((self.data['subs_smoke_cigarettes___5'] == 1) | (self.data['subs_smoke_cigarettes___5'] == -555)))
+                mask = (self.data[col].isna() & ((self.data['subs_smoke_cigarettes___5'] == 0)| (self.data['subs_smoke_cigarettes___5']==-555)))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col == 'subs_smoke_cigarettes___6':
+                mask = (self.data['gene_site'].isin([1,2,3,5,6]))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'subs_smoke_per_day':
                 mask = (self.data[col].isna() & ((self.data['subs_smoking_frequency']==-8) | (self.data['subs_smoking_frequency'] == -555)))
@@ -140,8 +147,9 @@ class BranchingLogic:
                 mask = (self.data[col].isna() & ((self.data['subs_tobacco_chew_use']==0)|(self.data['subs_tobacco_chew_use']==-8) | (self.data['subs_tobacco_chew_use']==-555)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'subs_smoking_stop_year':
-                mask = (self.data[col].isna() & ((self.data['subs_tobacco_use'] == 0) | (self.data['subs_tobacco_use'] == 0))\
-                        & ((self.data['subs_smoke_now'] == 1) | (self.data['subs_smoke_now'] == 2) |(self.data['subs_smoke_now'] == -8)| (self.data['subs_smoke_now'] == -555)))
+                mask = (self.data[col].isna() & ((self.data['subs_tobacco_use'] == 0))\
+                        | ((self.data['subs_tobacco_use'] == 1) & (self.data['subs_smoke_now'] == 1)))
+                self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['subs_snuff_use', 'subs_tobacco_chew_use']:
                 mask = ((self.data[col].isna()) & ((self.data['subs_smokeless_tobacc_use'] == 0)| (self.data['subs_smokeless_tobacc_use'] == -8)))
                 self.data[col] = self.data[col].mask(mask, -555)
@@ -162,20 +170,21 @@ class BranchingLogic:
                                                  (self.data['subs_alcohol_consump'] == -8) | (self.data['subs_alcohol_consump'] == -555)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['subs_alcohol_consump_freq', 'subs_alcohol_criticize', 'subs_alcohol_guilty', 'subs_alcohol_hangover', 'subs_alcohol_cutdown']:
-                mask = (self.data[col].isna() & ((self.data['subs_alcohol_consume_now']==0)|(self.data['subs_alcohol_consume_now'] == 2) |
-                        (self.data['subs_alcohol_consume_now']==-8)|(self.data['subs_alcohol_consume_now']==-555)))
+                mask = ((self.data['subs_alcohol_consume_now']==0)|(self.data['subs_alcohol_consume_now'] == 2) |
+                        (self.data['subs_alcohol_consume_now']==-8)|(self.data['subs_alcohol_consume_now']==-555))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['subs_alcoholtype_consumed___1', 'subs_alcoholtype_consumed___2', 'subs_alcoholtype_consumed___3',
                         'subs_alcoholtype_consumed___4', 'subs_alcoholtype_consumed___5', 'subs_alcoholtype_consumed____999']:
-                #ist argument ==0 becoz of auto completion of the variables to 0
-                mask = (self.data[col]==0 & ((self.data['subs_alcohol_consump']!=1) | (self.data['subs_alcohol_consume_now']!=1)))
+                #list argument ==0 becoz of auto completion of the variables to 0
+                mask = (self.data[col]==0 & ((self.data['subs_alcohol_consump']==0)|
+                            ((self.data['subs_alcohol_consump'] == 1) & (self.data['subs_alcohol_consume_now'] == 1))))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'subs_alcohol_consume_freq':
                 mask = (self.data[col].isna() &  ((self.data['subs_alcohol_consump_freq']==-8)|(self.data['subs_alcohol_consump_freq']==-555)))
                 self.data[col] = self.data[col].mask(mask, -555)
-            #elif col == 'subs_alcohol_specify':
-            #    mask = (self.data[col].isna() &  (self.data['subs_alcoholtype_consumed___5'] == 1))
-
+            elif col == 'subs_alcohol_specify':
+                mask = (self.data[col].isna() &  (self.data['subs_alcoholtype_consumed___5'] == 0)| (self.data['subs_alcoholtype_consumed___5']==-555))
+                self.data[col] = self.data[col].mask(mask, -555)
         return self.data
 
     def a_general_health_cancer_logic(self):
@@ -236,31 +245,30 @@ class BranchingLogic:
                                         ( self.data['genh_oes_cancer_treat_now']==-8)| ( self.data['genh_oes_cancer_treat_now']==-555)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['genh_cancer_specify_other', 'genh_oth_cancer_trad_med']:
-                mask = ( self.data[col].isna() &(( self.data['genh_other_cancers']==0)| ( self.data['genh_other_cancers']==2) |
-                                                 ( self.data['genh_other_cancers']==-8) | ( self.data['genh_other_cancers']==-555)))
+                mask = (( self.data['genh_other_cancers']==0)| ( self.data['genh_other_cancers']==2) |
+                                                 ( self.data['genh_other_cancers']==-8) | ( self.data['genh_other_cancers']==-555))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col == 'genh_other_cancer_treat':
+                mask = ((self.data['genh_other_cancers']==0)| ( self.data['genh_other_cancers']==2)|(self.data['genh_other_cancers']==-8))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'genh_oth_cancer_treat_now':
                 mask = ( self.data[col].isna() &((self.data['genh_other_cancer_treat']==0)| ( self.data['genh_other_cancer_treat']==2)|
-                                                 (self.data['genh_other_cancer_treat']==-8)))
+                                                 (self.data['genh_other_cancer_treat']==-8)| (self.data['genh_other_cancer_treat']==-555)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'genh_other_cancer_meds':
                 mask = ( self.data[col].isna() &((self.data['genh_oth_cancer_treat_now']==0)| ( self.data['genh_oth_cancer_treat_now']==2) |
-                                                 ( self.data['genh_oth_cancer_treat_now']==-8)| ( self.data['genh_oth_cancer_treat_now']==-8)))
+                                                 ( self.data['genh_oth_cancer_treat_now']==-8)| ( self.data['genh_oth_cancer_treat_now']==-555)))
                 self.data[col] = self.data[col].mask(mask, -555)
         return self.data
 
     def c_general_health_diet_logic(self):
         c_general_col = Instruments(self.data).get_c_general_health_diet()
         for col in c_general_col:
+            if col in ['genh_starchy_staple_food___13', 'genh_starchy_staple_food___14',
+                       'genh_starchy_staple_food___15', 'genh_starchy_staple_food___16']:
+                mask = self.data['gene_site'].isin([1,2,3,5,6])
+                self.data[col] = self.data[col].mask(mask, -555)
             if col in ['genh_starchy_staple_freq', 'genh_staple_servings']:
-                #if self.data['gene_site'] == 4:
-                #    mask = (self.data[col]==0 & ((self.data['genh_starchy_staple_food___2'] == 0) |
-                #                         (self.data['genh_starchy_staple_food___3'] == 0) |
-                #                         (self.data['genh_starchy_staple_food___13'] == 0) |
-                #                         (self.data['genh_starchy_staple_food___14'] == 0) |
-                #                         (self.data['genh_starchy_staple_food___15'] == 0) |
-                #                         (self.data['genh_starchy_staple_food___16'] == 0)))
-                #    self.data[col] = self.data[col].mask(mask, -555)
                 mask = (self.data[col]==0 & ((self.data['genh_starchy_staple_food___1'] == 0) |
                                          (self.data['genh_starchy_staple_food___2'] == 0) |
                                          (self.data['genh_starchy_staple_food___3'] == 0) |
@@ -289,6 +297,9 @@ class BranchingLogic:
             elif col == 'genh_cookingplace_specify':
                 mask = (self.data[col].isna() & ((self.data['genh_cooking_place']==1) | (self.data['genh_cooking_place']==2) |
                                                  (self.data['genh_cooking_place']==-555)))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col == 'genh_energy_specify':
+                mask = (self.data[col].isna() & ((self.data['genh_energy_source_type___6'] == 0)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'genh_smoke_freq_someone':
                 mask = ((self.data[col].isna()) & ((self.data['genh_smoker_in_your_house']==0)| (self.data['genh_smoker_in_your_house']==2)|
@@ -350,10 +361,13 @@ class BranchingLogic:
                                                  ( self.data['carf_diabetes_treatment']==-8)| ( self.data['carf_diabetes_treatment']==-555)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['carf_diabetes_treat___1', 'carf_diabetes_treat___2', 'carf_diabetes_treat___3', 'carf_diabetes_treat___4',
-                         'carf_diabetes_treat___5', 'carf_diabetes_treat____999', 'carf_diabetes_meds_2']:
+                         'carf_diabetes_treat___5', 'carf_diabetes_treat____999']:
                 mask = (self.data[col]==0 & ((self.data['carf_diabetes_treat_now'] == 0) | (self.data['carf_diabetes_treat_now'] == 2) |
                             (self.data['carf_diabetes_treat_now'] == -8) | (self.data['carf_diabetes_treat_now'] == -555)))
                 self.data[col] = self.data[col].mask(mask, -555)
+            elif col in ['carf_diabetes_treat___6']:
+                mask = self.data['gene_site'].isin([1,2,3,5,6])
+                self.data[col] = self.data[col].mask(mask, -555)            
             elif col in ['carf_diabetes_meds_2']:
                 mask = (self.data[col].isna() & ((self.data['carf_diabetes_treat_now'] == 0) | (self.data['carf_diabetes_treat_now'] == 2) |
                             (self.data['carf_diabetes_treat_now'] == -8) | (self.data['carf_diabetes_treat_now'] == -555)))
@@ -418,12 +432,12 @@ class BranchingLogic:
                 mask = (self.data[col].isna() & ((self.data['carf_stroke'] ==0) | (self.data['carf_stroke'] == 2)|
                                                  (self.data['carf_stroke'] == -8)))
                 self.data[col] = self.data[col].mask(mask, -555)
-            if col in ['carf_angina_treatment', 'carf_pain_location','carf_angina_traditional', 'carf_pain', 'carf_pain2']:
+            if col in ['carf_angina_treatment', 'carf_pain_location','carf_angina_traditional', 'carf_pain']:
                 mask = (self.data[col].isna() & ((self.data['carf_angina']==0)| (self.data['carf_angina']==2)| (self.data['carf_angina']==-8)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'carf_angina_treat_now':
-                mask = (self.data[col].isna() &((self.data['carf_angina_treatment']==0)| (self.data['carf_angina_treatment']==2)|
-                                                (self.data['carf_angina_treatment']==-8)| (self.data['carf_angina_treatment']==-555)))
+                mask = ((self.data['carf_angina_treatment']==0)| (self.data['carf_angina_treatment']==2)|
+                                                (self.data['carf_angina_treatment']==-8)| (self.data['carf_angina_treatment']==-555))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'carf_angina_meds':
                 mask = (self.data[col].isna() & ((self.data['carf_angina_treat_now']==0)| (self.data['carf_angina_treat_now']==2)|
@@ -452,8 +466,8 @@ class BranchingLogic:
                                                  (self.data['carf_hypertension']==-8)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'carf_hypertension_meds':
-                mask = ( self.data[col].isna() &((self.data['carf_hypertension_treat']==0)|(self.data['carf_hypertension_treat']==2)|
-                                ( self.data['carf_hypertension_treat']==-8)| ( self.data['carf_hypertension_treat']==-555)))
+                mask = ((self.data['carf_hypertension_treat']==0)|(self.data['carf_hypertension_treat']==2)|
+                                ( self.data['carf_hypertension_treat']==-8)| ( self.data['carf_hypertension_treat']==-555))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'carf_hypertension_medlist':
                 mask = ( self.data[col].isna() & ((self.data['carf_hypertension_meds']==0)| (self.data['carf_hypertension_meds']==2)|
@@ -485,7 +499,7 @@ class BranchingLogic:
                                                  (self.data['carf_thyroid']==-8)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'carf_thryroid_specify':
-                mask = ( self.data[col].isna() & ((self.data['carf_thyroid_type'] == 0)|(self.data['carf_thyroid_type']==2)|
+                mask = ( self.data[col].isna() & ((self.data['carf_thyroid_type']==0)|(self.data['carf_thyroid_type']==2)|
                                 (self.data['carf_thyroid_type']==-8)| (self.data['carf_thyroid_type'] == -555)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'carf_thyroid_treat_use':
@@ -503,6 +517,7 @@ class BranchingLogic:
             elif col == 'carf_kidneydiseas_specify':
                 mask = ( self.data[col].isna() & ((self.data['carf_kidney_disease_known']==0)|(self.data['carf_kidney_disease_known']==2)|
                                     (self.data['carf_kidney_disease_known']==-8)|(self.data['carf_kidney_disease_known']==-555)))
+                self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['carf_kidney_family_mother', 'carf_kidney_family_father', 'carf_kidney_family_other']:
                 mask = ( self.data[col].isna() &((self.data['carf_kidney_family']==0)|(self.data['carf_kidney_family']==2)|
                                 ( self.data['carf_kidney_family']==-8)| ( self.data['carf_kidney_family']==-555)))
@@ -513,11 +528,12 @@ class BranchingLogic:
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'carf_kidney_family_type':
                 mask = ( self.data[col].isna() &
-                         ((self.data['carf_kidney_family_other']!=1)|(self.data['carf_kidney_family_mother']!=1) |
-                           (self.data['carf_kidney_family_father']!=1)))
+                         ((self.data['carf_kidney_family_other']==0)|(self.data['carf_kidney_family_other']==-555))|
+                         ((self.data['carf_kidney_family_mother']==0) | (self.data['carf_kidney_family_mother']==-555))|
+                         ((self.data['carf_kidney_family_father']==0)| (self.data['carf_kidney_family_father']==-555)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'carf_kidney_fam_tspecify':
-                mask = ( self.data[col].isna() & (self.data['carf_kidney_family_type']==0))
+                mask = ( self.data[col].isna() & ((self.data['carf_kidney_family_type']==0)|(self.data['carf_kidney_family_type']==-555)))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['carf_joints_swollen', 'carf_joints_involved',
                          'carf_when_they_hurt', 'carf_symptoms_how_long']:
@@ -563,6 +579,9 @@ class BranchingLogic:
             elif col == 'gpaq_leisurevigorous_days':
                 mask = (self.data[col].isna() & ((self.data['gpaq_leisure_vigorous']==0)| (self.data['gpaq_leisure_vigorous']==-8)))
                 self.data[col] = self.data[col].mask(mask, -555)
+            elif col == 'gpaq_leisurevigorous_days':
+                mask = (self.data[col].isna() & ((self.data['gpaq_leisure_phy']==0)| (self.data['gpaq_leisure_phy']==-8)))
+                self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['gpaq_leisurevigorous_time', 'gpaq_leisurevigorous_hrs', 'gpaq_leisurevigorous_mins']:
                 mask = (self.data[col].isna() & (self.data['gpaq_leisurevigorous_days'].isna()))
                 self.data[col] = self.data[col].mask(mask, -555)
@@ -570,11 +589,8 @@ class BranchingLogic:
                 mask = (self.data[col].isna() & ((self.data['gpaq_leisuremoderate']==0)|
                                 (self.data['gpaq_leisuremoderate']==-8)))
                 self.data[col] = self.data[col].mask(mask, -555)
-            elif col in ['gpaq_leisurevigorous_time', 'gpaq_leisurevigorous_hrs', 'gpaq_leisurevigorous_mins']:
-                mask = (self.data[col].isna() & (self.data['gpaq_leisurevigorous_days'].isna()))
-                self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['gpaq_leisuremoderate_time', 'gpaq_leisuremoderate_hrs', 'gpaq_leisuremoderate_mins']:
-                mask = (self.data[col].isna() & (self.data['gpaq_leisuremoderate_days'].isna()))
+                mask = (self.data[col].isna() & (self.data['gpaq_leisuremoderate_days']-555))
                 self.data[col] = self.data[col].mask(mask, -555)
         return self.data
 
@@ -599,9 +615,19 @@ class BranchingLogic:
             elif col in ['ultr_plaque_comment']:
                 mask = (self.data[col].isna() & (self.data['ultr_plaque_measured'] == 1))
                 self.data[col] = self.data[col].mask(mask, -555)
-            elif col in ['ultr_plaque_technician', 'ultr_plaque_right_present', 'ultr_plaque_right',
-                         'ultr_plaque_left_present', 'ultr_plaque_left']:
+            elif col in ['ultr_plaque_technician']:
                 mask = (self.data[col].isna() & (self.data['ultr_plaque_measured']==0))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col in ['ultr_plaque_right_present', 'ultr_plaque_left_present']:
+                mask = (self.data[col].isna() & (self.data['ultr_plaque_measured']==0))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col in ['ultr_plaque_right']:
+                mask = (self.data[col].isna() & (self.data['ultr_plaque_right_present']==0)| 
+                        (self.data['ultr_plaque_right_present']==-555))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col in ['ultr_plaque_left']:
+                mask = (self.data[col].isna() & (self.data['ultr_plaque_left_present']==0)|
+                        (self.data['ultr_plaque_left_present']==-555))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col in ['ultr_dxa_scan_comment']:
                 mask = (self.data[col].isna() & self.data['ultr_dxa_scan_completed'] == 1)
@@ -674,7 +700,7 @@ class BranchingLogic:
         d_reversibility_test_col = Instruments(self.data).get_d_reversibility_test()
         for col in d_reversibility_test_col:
             if col in ['rspir_salb_time_admin', 'rspir_time_started', 'rspir_researcher',
-                       'rspir_num_of_blows', 'rspir_num_of_blows']:
+                       'rspir_num_of_blows', 'rspir_num_of_vblows']:
                 mask = (self.data[col].isna() & (self.data['rspir_salb_admin']==0))
                 self.data[col] = self.data[col].mask(mask, -555)
         return self.data
@@ -683,10 +709,74 @@ class BranchingLogic:
         a_microbiome = Instruments(self.data).get_a_microbiome()
         for col in a_microbiome:
             if col == 'micr_probiotics_t_period':
-                mask = (self.data[col].isna() & (self.data['micr_probiotics_taken']==1))
+                mask = (self.data[col].isna() & (self.data['micr_probiotics_taken']==0))
                 self.data[col] = self.data[col].mask(mask, -555)
             elif col == 'micr_wormintestine_period':
                 mask = (self.data[col].isna() & ((self.data['micr_worm_intestine_treat']==0)|
                         (self.data['micr_worm_intestine_treat']==2)|(self.data['micr_worm_intestine_treat']==-8)))
+                self.data[col] = self.data[col].mask(mask, -555)
+        return self.data
+    
+    def b_blood_collection(self):
+        b_blood_collection = Instruments(self.data).get_b_blood_collection()
+        for col in b_blood_collection:
+            if col == 'bloc_last_ate_hrs':
+                mask = (self.data[col].isna() & (self.data['bloc_last_eat_time'].isna()))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col == 'bloc_red_tubes_num':
+                mask = (self.data[col].isna() & (self.data['bloc_two_red_tubes']==1))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col == 'bloc_if_no_purple_tubes':
+                mask = (self.data[col].isna() & (self.data['bloc_one_purple_tube']==1))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col == 'bloc_grey_tubes_no':
+                mask = (self.data[col].isna() & (self.data['bloc_one_grey_tube']==1))
+                self.data[col] = self.data[col].mask(mask, -555)
+        return self.data
+    
+    def c_urine_collection(self):
+        c_urine_collection = Instruments(self.data).get_c_urine_collection()
+        for col in c_urine_collection:
+            if col == 'bloc_specify_reason':
+                mask = (self.data[col].isna() & (self.data['bloc_urine_collected']==1))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col in ['bloc_urcontainer_batchnum', 'bloc_urine_tube_expiry']:
+                mask = (self.data[col].isna() & (self.data['bloc_urine_collected']==0))
+                self.data[col] = self.data[col].mask(mask, -555)
+        return self.data
+    
+    def point_of_care_testing(self):
+        point_of_care_testing = Instruments(self.data).get_point_of_care_testing()
+        for col in point_of_care_testing:
+            if col == 'poc_comment':
+                mask = (self.data[col].isna() & (self.data['poc_test_conducted']==1))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col in ['poc_instrument_serial_num', 'poc_test_strip_batch_num', 'poc_teststrip_expiry_date',
+                         'poc_test_date', 'poc_test_time', 'poc_glucose_test_result', 'poc_chol_result',
+                         'poc_chol_results_provided', 'poc_hiv_strip_batch_num', 'poc_hiv_strip_expiry_date']:
+                mask = (self.data[col].isna() & (self.data['poc_test_conducted']==0))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col in ['poc_gluc_results_notes']:
+                mask = (self.data[col].isna() & (self.data['poc_gluc_results_provided']==1))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col in ['poc_chol_results_notes']:
+                mask = (self.data[col].isna() & (self.data['poc_chol_results_provided']==1))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col in ['poc_hiv_comment']:
+                mask = (self.data[col].isna() & (self.data['poc_hiv_test_conducted']==1))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col in ['poc_hiv_pre_test', 'poc_test_kit_serial_num', 'poc_hiv_test_date_done',
+                         'poc_technician_name', 'poc_hiv_test_result', 'poc_result_provided',
+                         'poc_post_test_counselling']:
+                mask = (self.data[col].isna() & (self.data['poc_hiv_test_conducted']==0))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col in ['poc_pre_test_worker']:
+                mask = (self.data[col].isna() & (self.data['poc_hiv_pre_test']==0))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col in ['poc_post_test_worker']:
+                mask = (self.data[col].isna() & (self.data['poc_post_test_counselling']==0))
+                self.data[col] = self.data[col].mask(mask, -555)
+            elif col in ['poc_hivpositive_firsttime']:
+                mask = (self.data[col].isna() & (self.data['poc_hiv_test_result']==0))
                 self.data[col] = self.data[col].mask(mask, -555)
         return self.data
