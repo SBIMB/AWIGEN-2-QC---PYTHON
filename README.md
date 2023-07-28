@@ -24,8 +24,6 @@ A collection of Python scripts written for the AWI-Gen 2 data QC process.
 
 `analysis_class_phase2.py` contains all python code functions used to produce data for all calculated variables in phase 2.
 
-`awigen_2_data_database.py` is used to merge all the sites REDCap data to form a single file for upload on SQL.
-
 `continousvar_qc.py` is used identify outliers between phases 1 and 2 continous data.
 
 `logic.py` is used to encode -555 (not applicable) based on the branching logic on the questionaire.
