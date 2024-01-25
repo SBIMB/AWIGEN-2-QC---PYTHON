@@ -75,7 +75,7 @@ biomarker_data.loc[biomarker_data['awigen_id']== 'VTF0Q', 'awigen_id'] = 'VTF0G'
 #biomarker_data.to_csv('./resources/biomarker_data_ne.csv')
 
 #becoz of the updates above some 2 rows had the same ids, had to scorrect this manually.
-biomarker_data = pd.read_csv('/home/theomathema/biomarkers/biomarker_data_ne.csv', sep = ';')
+biomarker_data = pd.read_csv('/biomarkers/biomarker_data_ne.csv', sep = ';')
 
 # encoding values <2 and greater than 300 of insulin
 biomarker_data['insulin'] = biomarker_data['insulin'].replace({'<2': -111, '>300': -222, 'empty cryotube': -999, 
