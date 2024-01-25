@@ -1,0 +1,42 @@
+def CreateStatementChangeincont_var():
+    create_script = ''' CREATE TABLE IF NOT EXISTS change_in_contvar(
+            study_id text PRIMARY KEY NOT NULL,
+            site integer NOT NULL,
+            height_change numeric,
+            weight_change numeric,
+            bmi_change numeric,
+            glucose_change numeric,
+            ldl_c_change numeric,
+            hdl_change numeric,
+            cholesterol_change numeric,
+            triglycerides_change numeric,
+            egfr_change numeric,
+            insulin_change numeric,
+            ur_creatinine_change numeric,
+            s_creatinine_change numeric,
+            mean_cimt_right_change numeric,
+            mean_cimt_left_change numeric,
+            VAT_change numeric,
+            SCAT_change numeric,
+            months_from_baseline integer,
+            years_from_baseline integer,
+            height_change_per_yr numeric,
+            weight_change_per_yr numeric,
+            bmi_change_per_yr numeric,
+            glucose_change_per_yr numeric,
+            ldl_c_change_per_yr numeric, 
+            hdl_change_per_yr numeric,
+            cholesterol_change_per_yr numeric,
+            triglycerides_change_per_yr numeric,
+            egfr_change_per_yr numeric,
+            insulin_change_per_yr numeric,
+            ur_creatinine_change_per_yr numeric,
+            s_creatinine_change_per_yr numeric,
+            mean_cimt_right_change_per_yr numeric,
+            mean_cimt_left_change_per_yr numeric,
+            VAT_change_per_yr numeric,
+            SCAT_change_per_yr numeric
+            )
+'''
+
+    return create_script
