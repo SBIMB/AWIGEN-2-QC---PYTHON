@@ -1,0 +1,28 @@
+#resources
+resources/*.jpeg
+resources/*.txt
+resources/*.csv
+resources/*.xlsx
+resources/*.png
+resources/*.csv.swp
+
+#redcap resources
+redcap_resources/resources/*.jpeg
+redcap_resources/resources/*.txt
+redcap_resources/resources/*.csv
+redcap_resources/resources/*.xlsx
+redcap_resources/resources/*.png
+redcap_resources/redcap_resources/
+
+
+
+*.ini
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+
+postgres_db_config.py
