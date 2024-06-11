@@ -2,12 +2,21 @@ import psycopg2
 from postgres_db_config import config
 #import pandas as pd
 #from sqlalchemy import create_engine
-import CreateStatementSoweto
-import CreateStatementDIMAMO
-import CreateStatementNairobi
-import CreateStatementNanoro
-import CreateStatementNavrongo
-import CreateStatementAgincourt
+
+import sys
+
+from os.path import dirname, abspath
+# Setup the path to the project root
+d = dirname(dirname(abspath(__file__)))
+# Add the project root to sys.path
+sys.path.append(d)
+
+from insert_into_database_scripts.create_statements.CreateStatementSoweto import CreateStatementSoweto
+from insert_into_database_scripts.create_statements.CreateStatementDIMAMO import CreateStatementDIMAMO
+from insert_into_database_scripts.create_statements.CreateStatementNairobi import CreateStatementNairobi
+from insert_into_database_scripts.create_statements.CreateStatementNanoro import CreateStatementNanoro
+from insert_into_database_scripts.create_statements.CreateStatementNavrongo import CreateStatementNavrongo
+from insert_into_database_scripts.create_statements.CreateStatementAgincourt import CreateStatementAgincourt
 
 params_ = config()
 

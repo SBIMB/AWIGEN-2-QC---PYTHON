@@ -332,7 +332,7 @@ class AnalysisClassPhase2:
                 return np.nan
             elif ((df['egfr'] < 60) or (df['urine_acr'] > 3)):
                 return 1
-            elif ((df['egfr'] >= 60) or (df['urine_acr'] <= 33)):
+            elif ((df['egfr'] >= 60) or (df['urine_acr'] <= 3)):
                 return 0
             else:
                 np.nan

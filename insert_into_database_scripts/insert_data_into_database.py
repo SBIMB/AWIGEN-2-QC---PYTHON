@@ -1,8 +1,14 @@
 import psycopg2
 import pandas as pd
 import numpy as np
+import sys
 from RedcapApiHandler import RedcapApiHandler
-#from sqlalchemy import create_engine
+
+from os.path import dirname, abspath
+d = dirname(dirname(abspath(__file__)))
+
+sys.path.append(d)
+
 from datetime import datetime
 from postgres_db_config import config
 

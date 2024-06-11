@@ -1,9 +1,15 @@
+import sys
 import pandas as pd
 import numpy as np
-import psycopg2
-import CreateStatementlosstofollowup
-from postgres_db_config import config
 
+from os.path import dirname, abspath
+d = dirname(dirname(abspath(__file__)))
+
+sys.path.append(d)
+
+import psycopg2
+from create_statements import CreateStatementlosstofollowup
+from postgres_db_config import config
 
 file_path= '../loss_to_follow_up/LTFU_csv/'
 

@@ -1,7 +1,14 @@
 import sys
-sys.path.append('/create_statements/')
+import sys
 
-from CreateStatementChangeincont_var import CreateStatementChangeincont_var
+from os.path import dirname, abspath
+
+# Setup the path to the project root
+d = dirname(dirname(abspath(__file__)))
+# Add the project root to sys.path
+sys.path.append(d)
+
+from insert_into_database_scripts.create_statements.CreateStatementChangeincont_var import CreateStatementChangeincont_var
 
 import pandas as pd
 import numpy as np
@@ -9,7 +16,7 @@ import psycopg2
 from postgres_db_config import config
 from datetime import datetime
 
-path = '../resources/'
+path = './resources/'
 
 #data uploads
 phase2_data = pd.read_csv(path + 'combined_phase2data_encoded.csv', sep = ',', low_memory=False)

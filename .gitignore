@@ -7,6 +7,7 @@ resources/*.png
 resources/*.csv.swp
 
 #redcap resources
+redcap_resources/
 redcap_resources/resources/*.jpeg
 redcap_resources/resources/*.txt
 redcap_resources/resources/*.csv
@@ -26,3 +27,8 @@ __pycache__/
 
 
 postgres_db_config.py
+
+
+ApiKeys.py
+RedcapApiHandler.py
+token

@@ -3,16 +3,21 @@ import pandas as pd
 import numpy as np
 from RedcapApiHandler import RedcapApiHandler
 from datetime import datetime
-from analysis_class_phase2 import AnalysisClassPhase2
-#from encoding import Encodings
-from NamingConversions import naming_conversion
-from logic import BranchingLogic
+import sys
+
+from os.path import dirname, abspath
+d = dirname(dirname(abspath(__file__)))
+
+sys.path.append(d)
+
+from data_transformation_scripts.analysis_class_phase2 import AnalysisClassPhase2
+#from data_transformation_scripts.encoding import Encodings
+from data_transformation_scripts.NamingConversions import naming_conversion
+from data_transformation_scripts.logic import BranchingLogic
 from postgres_db_config import config
-from ethnicities_mapping import ethnicities_mapping 
-from ethnicities_mapping_agincourt import ethnicities_mapping_agincourt
 import math
 
-sites = ['agincourt',  'dimamo', 'nairobi', 'nanoro', 'navrongo', 'soweto'] #'nanoro',
+sites = ['agincourt',  'dimamo', 'nairobi', 'nanoro', 'navrongo', 'soweto'] 
 datestr = datetime.today().strftime('%Y%m%d')
 
 path = './resources/'

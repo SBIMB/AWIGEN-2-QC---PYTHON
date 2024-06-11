@@ -1,5 +1,11 @@
 import pandas as pd
 import psycopg2
+import sys
+
+from os.path import dirname, abspath
+d = dirname(dirname(abspath(__file__)))
+sys.path.append(d)
+
 from postgres_db_config import config
 import numpy as np
 

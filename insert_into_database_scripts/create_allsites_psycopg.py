@@ -1,7 +1,15 @@
 import psycopg2
 import pandas as pd
-#from sqlalchemy import create_engine
-import CreateStatementallsites_2
+import sys
+
+from os.path import dirname, abspath
+# Setup the path to the project root
+d = dirname(dirname(abspath(__file__)))
+# Add the project root to sys.path
+sys.path.append(d)
+
+from insert_into_database_scripts.create_statements.CreateStatementallsites_2 import CreateStatementallsites_2
+
 from postgres_db_config import config
 
 params_ = config()

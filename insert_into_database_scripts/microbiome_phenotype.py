@@ -1,13 +1,24 @@
+import os
+
+import sys
+
+from os.path import dirname, abspath
+d = dirname(dirname(abspath(__file__)))
+
+sys.path.append(d)
+
+from postgres_db_config import config
+
 import pandas as pd
 import numpy as np
 import psycopg2
-import CREATESTATEMENTmicrobiome
-from postgres_db_config import config
+from insert_into_database_scripts.create_statements.CREATESTATEMENTmicrobiome import CREATESTATEMENTmicrobiome
 
 
-file_path= '.../microbiome/'
+#datauploads
+file_path= '../microbiome/'
 
-biomarker_data = pd.read_csv('.../AWIGen2BiomarkerResu-AWIGen2Biomarkers_DATA_2023-11-29_1355.csv', sep=';')
+biomarker_data = pd.read_csv('../biomarkers/AWIGen2BiomarkerResu-AWIGen2Biomarkers_DATA_2023-11-29_1355.csv', sep=';')
 
 agincourt_all_data = pd.read_csv(file_path + 'AWIGEN2AgincourtDraf_DATA_2023-07-26_1335.csv', sep = ';')
 
@@ -15,7 +26,7 @@ micro_participants = pd.read_csv(file_path + 'microbiome_study_ids_27_07_23.csv'
 
 agincourt_missing_study_ids = pd.read_csv(file_path + 'agincourt_missing_phenotype_study_ids.csv', sep=';')
 
-phase2_data = pd.read_csv('..../combined_phase2data_encoded.csv',
+phase2_data = pd.read_csv('resources/combined_phase2data_encoded.csv',
                      delimiter=',', low_memory=False)
 
 phase2_data = phase2_data.merge(biomarker_data[['awigen_id', 'ultr_qc_scat', 'ultr_qc_vat', 'ultr_qc_rt_t_mean',
@@ -58,7 +69,7 @@ agincourt_missing_study_ids_microbiome_phenotype[['sex', 'enrolment_date', 'age'
                     'fasting_confirmed', 'arthritis_results', 'rheumatoid_factor', 'esr_crp',
                     'pesticide', 'breast_cancer', 'cervical_cancer', 'visceral_fat', 'subcutaneous_fat',
                     'mean_cimt_right', 'mean_cimt_left', 'visceral_comment', 'right_plaque_thickness',
-                    'left_plaque_thickness', 'hiv_arv_start_with', 'hiv_arv_meds_specify']] = -999
+                    'left_plaque_thickness', 'hiv_arv_start_with', 'hiv_arv_meds_specify', 'tb']] = -999
 
 
 
@@ -67,7 +78,7 @@ micro_data_2 = micro_participants.merge(phase2_data, left_on='Sample_ID', right_
 
 micro_data = micro_participants.merge(phase2_data[['study_id', 'site', 'a_microbiome_complete', 'participant_identification_complete', 'sex']], left_on='Sample_ID', right_on='study_id', how='left')
 
-micro_data_complete = micro_data[micro_data['a_microbiome_complete'] == 2]
+#micro_data_complete = micro_data[micro_data['a_microbiome_complete'] == 2]
 
 micro_data_complete = micro_data_2[['study_id', 'sex', 'site', 'enrolment_date', 'age', 
                     'country',  'micr_take_antibiotics', 'micr_diarrhea_last_time', 
@@ -86,7 +97,7 @@ micro_data_complete = micro_data_2[['study_id', 'sex', 'site', 'enrolment_date',
                     'fasting_confirmed', 'arthritis_results', 'rheumatoid_factor', 'esr_crp',
                     'pesticide', 'breast_cancer', 'cervical_cancer', 'visceral_fat', 'subcutaneous_fat',
                     'mean_cimt_right', 'mean_cimt_left', 'visceral_comment', 'right_plaque_thickness',
-                    'left_plaque_thickness', 'hiv_arv_start_with', 'hiv_arv_meds_specify']]
+                    'left_plaque_thickness', 'hiv_arv_start_with', 'hiv_arv_meds_specify', 'tb']]
 
 micro_data_complete = micro_data_complete.drop_duplicates()
 
@@ -111,7 +122,8 @@ mistyped_ids_phenotype_data = mistyped_ids_phenotype_data[['study_id', 'sex', 's
                     'fasting_confirmed', 'arthritis_results', 'rheumatoid_factor', 'esr_crp',
                     'pesticide', 'breast_cancer', 'cervical_cancer', 'visceral_fat', 'subcutaneous_fat',
                     'mean_cimt_right', 'mean_cimt_left', 'visceral_comment', 'right_plaque_thickness',
-                    'left_plaque_thickness', 'hiv_arv_start_with', 'hiv_arv_meds_specify']]
+                    'left_plaque_thickness', 'hiv_arv_start_with', 'hiv_arv_meds_specify', 'tb']]
+
 
 
 microbiome_phenotype_data = pd.concat([micro_data_complete, mistyped_ids_phenotype_data, agincourt_missing_study_ids_microbiome_phenotype], ignore_index=True)
@@ -121,8 +133,12 @@ microbiome_phenotype_data = microbiome_phenotype_data.replace({np.nan:-999})
 
 microbiome_phenotype_data.to_csv(file_path + 'microbiome_phenotype_data.csv', index=False)
 
+tb_microbiome_data = microbiome_phenotype_data[['study_id', 'tb']]
+
+tb_microbiome_data.to_csv(file_path + 'tb_microbiome_data.csv', index = False)
+
 # create the database    
-params_ = config()
+params_ = postgres_db_config.config()
 
 conn = None
 cur = None
