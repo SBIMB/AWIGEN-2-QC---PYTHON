@@ -12,7 +12,7 @@ from postgres_db_config import config
 import pandas as pd
 import numpy as np
 import psycopg2
-from insert_into_database_scripts.create_statements.CREATESTATEMENTmicrobiome import CREATESTATEMENTmicrobiome
+#from insert_into_database_scripts.create_statements.CREATESTATEMENTmicrobiome import CREATESTATEMENTmicrobiome
 
 
 #datauploads
@@ -21,6 +21,7 @@ file_path= '../microbiome/'
 biomarker_data = pd.read_csv('../biomarkers/AWIGen2BiomarkerResu-AWIGen2Biomarkers_DATA_2023-11-29_1355.csv', sep=';')
 
 agincourt_all_data = pd.read_csv(file_path + 'AWIGEN2AgincourtDraf_DATA_2023-07-26_1335.csv', sep = ';')
+print(agincourt_all_data[agincourt_all_data['study_id'] == 'AB0008']['micr_worm_intestine_treat'])
 
 micro_participants = pd.read_csv(file_path + 'microbiome_study_ids_27_07_23.csv', sep = ';')
 
@@ -50,7 +51,12 @@ agincourt_missing_study_ids_microbiome_phenotype = agincourt_all_data[agincourt_
                                                     'micr_diarrhea_last_time', 'micr_worm_intestine_treat', 'micr_probiotics_t_period',
                                                     'micr_wormintestine_period', 'micr_probiotics_taken']]
 
+
+#print(agincourt_missing_study_ids_microbiome_phenotype[['study_id', 'micr_take_antibiotics']])
+
 agincourt_missing_study_ids_microbiome_phenotype = agincourt_missing_study_ids_microbiome_phenotype.drop_duplicates(subset= ['study_id'], keep = 'last')
+
+print(agincourt_missing_study_ids_microbiome_phenotype[['study_id', 'micr_take_antibiotics']])
 
 agincourt_missing_study_ids_microbiome_phenotype['site']=1
 
@@ -138,10 +144,10 @@ tb_microbiome_data = microbiome_phenotype_data[['study_id', 'tb']]
 tb_microbiome_data.to_csv(file_path + 'tb_microbiome_data.csv', index = False)
 
 # create the database    
-params_ = postgres_db_config.config()
+#params_ = postgres_db_config.config()
 
-conn = None
-cur = None
+#conn = None
+#cur = None
 
 try: 
     conn = psycopg2.connect( **params_)

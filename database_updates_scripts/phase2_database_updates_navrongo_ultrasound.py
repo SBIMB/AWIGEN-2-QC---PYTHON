@@ -60,6 +60,9 @@ phase2_data_biomarkers = phase2_data_biomarkers.merge(biomarker_data[['study_id'
                         'visceral_comment', 'ultrasound_qc_results_complete' ]], left_on='study_id', right_on='study_id', how='left')
 
 
+print(phase2_data[phase2_data['study_id']=='NYW0L']['bifurcation_valid'])
+
+
 phase2_data_biomarkers['cimt_mean_max'] = (phase2_data_biomarkers['max_cimt_right']+phase2_data_biomarkers['max_cimt_left'])/2
 
 data = phase2_data_biomarkers.replace(np.nan, -999)
@@ -73,6 +76,8 @@ data = data[['study_id', 'date_ultrasound_taken', 'time_ultrasound_taken', 'ultr
         'max_cimt_left', 'mean_cimt_left', 'visceral_fat', 'subcutaneous_fat',
         'visceral_comment', 'cimt_mean_max', 'ultrasound_qc_results_complete'
  ]]
+
+print(data[data['study_id']=='NYW0L']['bifurcation_valid'])
 
 print(data.ultrasound_qc_results_complete.value_counts())
 
@@ -139,16 +144,16 @@ try:
         # Execute the UPDATE query with the provided values
         cur.execute(update_query, (
                     new_date_ultrasound_taken_value, new_time_ultrasound_taken_value, 
-                    new_ultrsound_num_images_value, new_birfucations_comment_value, new_right_plaque_thickness_value, 
+                   new_ultrsound_num_images_value, new_birfucations_comment_value, new_right_plaque_thickness_value, 
                     new_left_plaque_thickness_value, new_imt_valid, new_bifurcation_valid, new_ultrasound_rt_points_value, 
                     new_min_cimt_right_value, new_max_cimt_right_value, new_mean_cimt_right_value, new_ultrasound_lt_points_value, 
                     new_min_cimt_left_value, new_max_cimt_left_value, new_mean_cimt_left_value, new_visceral_fat_value,
                     new_subcateneous_fat_value, new_visceral_comment_value, 
                     new_cimt_mean_max_value, new_ultrasound_qc_results_complete_value,                        
                     condition_column_value))
+        print("Data added to the new column successfully.")
 
     conn.commit()
-
 except Exception as error:
     print(error)
     

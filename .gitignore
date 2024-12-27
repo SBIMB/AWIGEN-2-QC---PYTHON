@@ -5,6 +5,7 @@ resources/*.csv
 resources/*.xlsx
 resources/*.png
 resources/*.csv.swp
+data_qc/
 
 #redcap resources
 redcap_resources/
