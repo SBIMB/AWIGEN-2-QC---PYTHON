@@ -15,6 +15,7 @@ redcap_resources/resources/*.csv
 redcap_resources/resources/*.xlsx
 redcap_resources/resources/*.png
 redcap_resources/redcap_resources/
+EGA/
 
 
 
