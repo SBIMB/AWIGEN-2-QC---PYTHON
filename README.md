@@ -36,19 +36,19 @@ A collection of Python scripts written for the AWI-Gen 2 data QC process.
 
 `encoding.py' Script for re-encoding categorical files.
 
-'CreateStatement*site*.py' details the create statement for the individual site table
+`CreateStatement*site*.py` details the create statement for the individual site table
 
-'CreateStatementall_site_2.py' details the create statement for the all sites table.
+`CreateStatementall_site_2.py` details the create statement for the all sites table.
 
-'NamingConversion.py' is used to change the variable names on the all_sites table.
+`NamingConversion.py` is used to change the variable names on the all_sites table.
 
-'create_all_sites_psycopg.py' is used to apply the allsites CREATE statement in sql.
+`create_all_sites_psycopg.py` is used to apply the allsites CREATE statement in sql.
 
-'create_database_phase2.py' is used to apply the specific sites CREATE statement in sql.
+`create_database_phase2.py` is used to apply the specific sites CREATE statement in sql.
 
-'insert_data_into_database.py' is used to apply the INSERT statement, uploading the individual site data into its respective table after various data transformation processes.
+`insert_data_into_database.py` is used to apply the INSERT statement, uploading the individual site data into its respective table after various data transformation processes.
 
-'insert_into_all_sites.py' is used to apply the INSERT statement, uploading the all_sites table into the all_sites table after various data transformation processes.
+`insert_into_all_sites.py` is used to apply the INSERT statement, uploading the all_sites table into the all_sites table after various data transformation processes.
 
 
 

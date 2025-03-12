@@ -41,7 +41,11 @@ height_ids = height_outliers['ID']
 
 #merge phase 1 and phase 2 data
 height_merged = pd.merge(phase1_data[['study_id', 'standing_height_qc', 'bmi_c_qc']], phase2_data[['study_id', 'standing_height', 'weight',
+<<<<<<< HEAD
                         's_creatinine', 'sex', 'age', 'acr']], on = 'study_id', how='right')
+=======
+                        's_creatinine', 'sex', 'age']], on = 'study_id', how='right')
+>>>>>>> master
 
 #update the standing height values with phase 1 standing height values for participants with changes >50mm
 height_merged.loc[height_merged['study_id'].isin(height_outliers['ID']), 'standing_height'] = height_merged['standing_height_qc']
@@ -83,6 +87,7 @@ def egfr(df):
 
 height_merged['egfr_c'] = height_merged.apply(egfr, axis=1)
 
+<<<<<<< HEAD
 # ckd calculation
 def ckd(df):
 
@@ -100,6 +105,8 @@ height_merged['ckd_c'] = height_merged.apply(ckd, axis=1)
 print(phase2_data['ckd_c'].value_counts(dropna=False))
 print(height_merged['ckd_c'].value_counts(dropna=False))
 
+=======
+>>>>>>> master
 print(height_merged.shape)
 
 
@@ -114,7 +121,11 @@ print(height_merged.shape)
 
 
 #preparing the data for the database.
+<<<<<<< HEAD
 height_merged=height_merged[['study_id', 'standing_height', 'bmi_c', 'egfr_c', 'bmi_cat_c', 'ckd_c']]
+=======
+height_merged=height_merged[['study_id', 'standing_height', 'bmi_c', 'egfr_c', 'bmi_cat_c']]
+>>>>>>> master
 data = height_merged
 
 # create the database    
@@ -144,18 +155,29 @@ try:
         new_standing_height_values = row['standing_height']
         new_bmi_values = row['bmi_c']
         new_egfr_c_values = row['egfr_c']
+<<<<<<< HEAD
         new_ckd_c_values = row['ckd_c']
+=======
+>>>>>>> master
         
 
         # Define the UPDATE query
         update_query = """
             UPDATE {} 
+<<<<<<< HEAD
             SET standing_height = %s, bmi_c = %s, egfr_c = %s, ckd_c = %s
+=======
+            SET standing_height = %s, bmi_c = %s, egfr_c = %s
+>>>>>>> master
             WHERE study_id = %s
             """.format(table_name)
 
         # Execute the UPDATE query with the provided values
+<<<<<<< HEAD
         cur.execute(update_query, (new_standing_height_values, new_bmi_values, new_egfr_c_values,  new_ckd_c_values,              
+=======
+        cur.execute(update_query, (new_standing_height_values, new_bmi_values, new_egfr_c_values,                
+>>>>>>> master
                     condition_column_value))
 
     conn.commit()
@@ -163,7 +185,11 @@ try:
 except Exception as error:
     print(error)
     
+<<<<<<< HEAD
 #finally:
+=======
+finally:
+>>>>>>> master
     if cur is not None:
         cur.close()
     if conn is not None:
